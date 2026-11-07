@@ -212,7 +212,7 @@ button.ql-nhom{background:none;border:0;padding:0;min-height:32px;width:calc(100
   <header class="qt-dau">
     <p class="qt-nam">Tết Đinh Mùi 2027</p>
     <h1>Quà Tết Tâm An</h1>
-    <p class="phu cau">Chọn mẫu, cho vào giỏ, để lại số điện thoại là xong. Đặt tối thiểu 10 set. Giá chưa bao gồm VAT và phí vận chuyển.</p>
+    <p class="phu cau">Chọn mẫu, cho vào giỏ, để lại số điện thoại là xong. Đặt tối thiểu <span data-toithieu>10</span> set. Giá chưa bao gồm VAT và phí vận chuyển.</p>
   </header>
   <div class="qt-tim"><input id="tim" type="search" placeholder="Tìm theo mã hoặc tên set" aria-label="Tìm theo mã hoặc tên set" autocomplete="off"></div>
   <div class="qt-loc">
@@ -252,7 +252,7 @@ const PB='2.0';
 const ZALO='https://zalo.me/0986293719';
 const API='https://script.google.com/macros/s/AKfycbzPVjymGzh4kdjlRtCQ5vw89XcuJFEB3rtBv31D6tcNwUmygc4qmBKzh1jJaD7PsFQSCw/exec';
 const GCID='734050778745-bv6g5klsl18o4glubrsqsn0o7g6rlilo.apps.googleusercontent.com';
-const TOI_THIEU=10,TI_LE_COC=0.3,TIEU_DE=document.title;
+let TOI_THIEU=10,TI_LE_COC=0.3,LAM_TRON=1000,_ch=0;const TIEU_DE=document.title;
 const LOC=[
   {k:'all',t:'Tất cả',f:()=>true},
   {k:'a',t:'Dưới 550k',f:p=>p<550000},
@@ -265,7 +265,11 @@ const vnd=n=>Number(n||0).toLocaleString('vi-VN')+'đ';
 const soVn=n=>Number(n||0).toLocaleString('vi-VN');
 const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const boDau=s=>String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/đ/g,'d').replace(/Đ/g,'D').toLowerCase();
-const lamTron=n=>Math.round(n/1000)*1000;
+const lamTron=n=>Math.round(n/LAM_TRON)*LAM_TRON;
+const urlAnh=u=>{u=String(u||'');return /^(https:\/\/|img\/)/.test(u)?u:''};
+function chuanSdt(x){let d=String(x||'').replace(/\D/g,'');if(d.indexOf('0084')===0)d=d.slice(4);else if(d.indexOf('84')===0&&d.length>=11)d=d.slice(2);if(d&&d[0]!=='0')d='0'+d;return d}
+function apCauHinh(c){if(c.tiLeCoc>0&&c.tiLeCoc<=1)TI_LE_COC=c.tiLeCoc;if(c.toiThieu>0)TOI_THIEU=c.toiThieu;if(c.lamTron>0)LAM_TRON=c.lamTron;document.querySelectorAll('[data-toithieu]').forEach(e=>{e.textContent=TOI_THIEU})}
+function taiCauHinh(){if(_ch)return;_ch=1;goi('cauHinhKhach').then(r=>{if(r&&r.ok){apCauHinh(r);if(!$('#hopGio').hidden&&$('#ghGui'))capSoGio()}else _ch=0}).catch(()=>{_ch=0})}
 function docLuu(k,mac){try{const v=localStorage.getItem(k);return v?JSON.parse(v):mac}catch(e){return mac}}
 function ghiLuu(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
 async function goi(hd,du){
@@ -297,7 +301,7 @@ function veDs(){
     const ruou=mon.findIndex(t=>/rượu/i.test(t));
     return `<article class="the qt-set">
   <button type="button" class="qt-anh" data-xem="${i}" aria-label="Xem ${d.imgs.length} ảnh ${esc(d.code)}">
-    <img src="${a.src}" alt="${esc(d.name)} ${esc(d.code)}" loading="lazy" width="${a.w}" height="${a.h}">
+    <img src="${esc(urlAnh(a.src))}" alt="${esc(d.name)} ${esc(d.code)}" loading="lazy" width="${a.w}" height="${a.h}">
     <span class="qt-dem">${d.imgs.length} ảnh</span></button>
   <div class="qt-than">
     <div class="dong"><span class="qt-ma lien">${esc(d.code)}</span><h2 class="ten">${esc(d.name)}</h2></div>
@@ -321,8 +325,8 @@ function tenTep(d,k){return d.code.replace(/[^A-Za-z0-9]+/g,'_').replace(/_+$/,'
 function moAnh(i){
   const d=DS[i];
   $('#hopKhung').innerHTML=`<div class="dong qt-hd"><span class="qt-ma lien">${esc(d.code)}</span><span class="ten" id="hopTen">${esc(d.name)}</span><button type="button" class="qt-dong-x" data-donghop="hopAnh" aria-label="Đóng">×</button></div>
-  ${d.imgs.map((m,k)=>`<figure class="qt-hinh"><img src="${m.src}" alt="${esc(d.name)} ảnh ${k+1}" width="${m.w}" height="${m.h}" loading="lazy">
-    <a class="qt-hop-nut qt-phu" href="${m.src}" download="${tenTep(d,k)}">Tải ảnh ${k+1}</a></figure>`).join('')}
+  ${d.imgs.map((m,k)=>`<figure class="qt-hinh"><img src="${esc(urlAnh(m.src))}" alt="${esc(d.name)} ảnh ${k+1}" width="${m.w}" height="${m.h}" loading="lazy">
+    <a class="qt-hop-nut qt-phu" href="${esc(urlAnh(m.src))}" download="${tenTep(d,k)}">Tải ảnh ${k+1}</a></figure>`).join('')}
   ${d.imgs.length>1?`<button type="button" class="qt-chinhnut qt-taiall" data-taiall="${i}">Tải tất cả ${d.imgs.length} ảnh</button>`:''}
   <p class="phu cau" style="margin:12px 0 0">Nếu không tải được, nhấn giữ vào ảnh rồi chọn Lưu ảnh. Khi mở trong Zalo, có thể chọn mở bằng trình duyệt để tải dễ hơn.</p>`;
   moHop('hopAnh');
@@ -332,7 +336,7 @@ function moAnh(i){
 function moHop(id){const h=$('#'+id);h.hidden=false;document.body.style.overflow='hidden';h.querySelector('.khung').scrollTop=0;const x=h.querySelector('.qt-dong-x');if(x)x.focus({preventScroll:true})}
 function dongHop(id){$('#'+id).hidden=true;if(![...document.querySelectorAll('.hop')].some(h=>!h.hidden))document.body.style.overflow='';
   if(id==='hopAnh'&&choGhep){const d=choGhep;choGhep=null;apDung(d)}
-  if(id==='hopDon'){QL.mo=null;if(QL.ds.length)veQl()}}
+  if(id==='hopDon'){xaSl(true);QL.mo=null;QL.ctVe=null;if(QL.ds.length)veQl()}}
 function bao(t){const e=$('#bao');e.textContent=t;e.classList.add('on');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('on'),3800)}
 function baoHoanTac(t,fn){const e=$('#baoHt');e.innerHTML=`<span class="cau" style="flex:1">${esc(t)}</span><button type="button" id="htNut">Hoàn tác</button>`;e.hidden=false;
   clearTimeout(e._t);e._t=setTimeout(()=>{e.hidden=true},10000);$('#htNut').onclick=()=>{e.hidden=true;clearTimeout(e._t);fn()}}
@@ -351,9 +355,9 @@ function veThanh(){
   e.innerHTML=`<div class="dong"><div style="min-width:0"><div class="gh-so ten">Giỏ hàng: ${t.sl} set</div><div class="phu">Tạm tính <span class="tien">${vnd(t.tien)}</span></div></div><button type="button" class="qt-chinhnut gh-mo" data-mogio>Xem giỏ</button></div>`;
 }
 function capNutThem(ma){const b=document.querySelector(`[data-them="${CSS.escape(ma)}"]`);if(!b)return;const sl=GIO[ma]||0;b.className=sl?'qt-phu':'qt-chinhnut';b.textContent=sl?'Trong giỏ: '+sl+' set':'Thêm vào giỏ'}
-function themGio(ma){if(GIO[ma]){moGio();return}GIO[ma]=1;luuGio();capNutThem(ma);bao('Đã thêm '+ma+' vào giỏ. Bấm Xem giỏ ở cuối màn hình để chọn số lượng.')}
+function themGio(ma){taiCauHinh();if(GIO[ma]){moGio();return}GIO[ma]=1;luuGio();capNutThem(ma);bao('Đã thêm '+ma+' vào giỏ. Bấm Xem giỏ ở cuối màn hình để chọn số lượng.')}
 function hdHop(t,id){return `<div class="dong qt-hd"><span class="ten" style="font-weight:700">${esc(t)}</span><button type="button" class="qt-dong-x" data-donghop="${id}" aria-label="Đóng">×</button></div>`}
-function moGio(){veGio();moHop('hopGio')}
+function moGio(){taiCauHinh();veGio();moHop('hopGio')}
 function veGio(){
   const t=tongGio(),k=$('#ghKhung');
   if(!t.sl){k.innerHTML=hdHop('Giỏ hàng','hopGio')+`<p class="qt-trong phu cau">Giỏ hàng đang trống. Bấm Thêm vào giỏ ở mẫu muốn đặt.</p>${dsDonCu()}`;return}
@@ -364,9 +368,9 @@ function veGio(){
   <div id="ghChuy"></div>
   <label class="gh-nhan" for="ghSdt">Số điện thoại để Tâm An gọi xác nhận</label>
   <input id="ghSdt" class="gh-o" type="tel" inputmode="tel" autocomplete="tel" placeholder="Ví dụ 0912 345 678" value="${esc(docLuu('qt_sdt',''))}">
-  <input id="ghWeb" class="gh-an" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+  <input id="ghWeb" class="gh-an" name="qt_kiem_tra_an" tabindex="-1" autocomplete="off" aria-hidden="true">
   <div class="gh-tong"><div class="dong"><span>Tổng tiền</span><span class="so-chinh tien" id="ghTong" style="margin-left:auto"></span></div>
-  <div class="dong phu"><span>Đặt cọc 30% sau khi gửi đơn</span><span class="tien" id="ghCoc" style="margin-left:auto"></span></div>
+  <div class="dong phu"><span id="ghCocNhan">Đặt cọc sau khi gửi đơn</span><span class="tien" id="ghCoc" style="margin-left:auto"></span></div>
   <p class="phu mo cau">Giá chưa bao gồm VAT và phí vận chuyển. Tâm An sẽ gọi xác nhận đơn trước khi nhận cọc.</p></div>
   <p class="gh-loi cau" id="ghLoi" role="alert" hidden></p>
   <div class="gh-day"><button type="button" class="qt-chinhnut" id="ghGui">Gửi đơn đặt hàng</button></div>`;
@@ -377,6 +381,7 @@ function capSoGio(){
   document.querySelectorAll('[data-ghma]').forEach(el=>{const x=t.l.find(y=>y.ma===el.dataset.ghma);if(x)el.querySelector('[data-ghtt]').textContent=vnd(x.sl*x.d.price)});
   if($('#ghTong'))$('#ghTong').textContent=vnd(t.tien);
   if($('#ghCoc'))$('#ghCoc').textContent=vnd(lamTron(t.tien*TI_LE_COC));
+  if($('#ghCocNhan'))$('#ghCocNhan').textContent='Đặt cọc '+Math.round(TI_LE_COC*100)+'% sau khi gửi đơn';
   if($('#ghChuy'))$('#ghChuy').innerHTML=t.sl<TOI_THIEU?`<p class="gh-chuy cau">Đơn đang có ${t.sl} set. Tâm An nhận đơn từ ${TOI_THIEU} set trở lên. Đơn ít hơn vẫn gửi được để Tâm An gọi tư vấn.</p>`:`<p class="phu cau" style="margin:4px 0 0">Đơn có ${t.sl} set, đã đủ mức tối thiểu ${TOI_THIEU} set.</p>`;
   veThanh();
 }
@@ -388,22 +393,25 @@ function datSl(ma,sl,goTay){
 }
 function loiGio(t){const e=$('#ghLoi');e.textContent=t;e.hidden=false;const b=$('#ghGui');b.disabled=false;b.textContent='Thử lại'}
 async function guiDon(){
-  const o=$('#ghSdt'),sdt=o.value.replace(/[\s.\-]/g,'').replace(/^\+?84/,'0');
+  const o=$('#ghSdt'),sdt=chuanSdt(o.value);
   if(!/^0\d{9}$/.test(sdt)){loiGio('Số điện thoại chưa đúng. Vui lòng nhập đủ 10 số, bắt đầu bằng số 0.');o.focus();return}
   const l=dongGio();if(!l.length)return;
   ghiLuu('qt_sdt',sdt);
+  let khoa=docLuu('qt_khoa','');if(!khoa){khoa=(crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2));ghiLuu('qt_khoa',khoa)}
   const b=$('#ghGui');b.disabled=true;b.innerHTML='<span class="ql-quay"></span>Đang gửi đơn…';$('#ghLoi').hidden=true;
   try{
-    const r=await goi('datHang',{sdt,dong:l.map(x=>({ma:x.ma,sl:x.sl})),web:$('#ghWeb').value});
-    if(!r.ok)throw new Error(r.loi||'Chưa gửi được đơn.');
+    const r=await goi('datHang',{sdt,dong:l.map(x=>({ma:x.ma,sl:x.sl})),web:$('#ghWeb').value,khoa});
+    if(!r||!r.ok)throw new Error(r&&r.loi||'Chưa gửi được đơn.');
+    if(!r.ma||!Array.isArray(r.dong)||!r.dong.length)throw new Error('Chưa nhận được xác nhận đơn. Vui lòng nhắn Zalo cho Tâm An.');
     const don={ma:r.ma,sdt:r.sdt,tg:r.thoiGian,dong:r.dong,tong:r.tong,coc:r.coc,qr:r.qr};
-    const ds=docLuu('qt_don',[]);ds.unshift(don);ghiLuu('qt_don',Array.isArray(ds)?ds.slice(0,10):[don]);
-    GIO={};luuGio();veDs();
     vePhieu(don,{hop:'hopGio',moi:true});
-  }catch(e){loiGio(e.message||'Chưa gửi được đơn. Vui lòng thử lại.')}
+    const ds=donCu();ds.unshift(don);ghiLuu('qt_don',ds.slice(0,10));
+    GIO={};luuGio();ghiLuu('qt_khoa','');veDs();
+  }catch(e){if($('#ghGui'))loiGio(e.message||'Chưa gửi được đơn. Vui lòng thử lại.')}
 }
+function donCu(){const ds=docLuu('qt_don',[]);return Array.isArray(ds)?ds.filter(d=>d&&d.ma&&Array.isArray(d.dong)&&d.dong.length):[]}
 function dsDonCu(){
-  const ds=docLuu('qt_don',[]);if(!Array.isArray(ds)||!ds.length)return'';
+  const ds=donCu();if(!ds.length)return'';
   return `<p class="gh-nhan">Đơn đã gửi từ máy này</p>`+ds.map((d,i)=>`<button type="button" class="qt-phu" style="width:100%;margin-bottom:8px" data-phieucu="${i}">Phiếu ${esc(d.ma)} · ${esc(d.tg||'')}</button>`).join('');
 }
 
@@ -453,7 +461,7 @@ async function luuAnhPhieu(){
     g.textAlign='center';
     if(q){g.fillStyle='#FDF3F0';g.fillRect(pad,y,W-2*pad,d.qr?420:120);g.fillStyle='#4B5563';g.font='24px sans-serif';g.fillText(d.qr?q.nhan:q.nhan.replace('Quét mã để','Số tiền'),W/2,y+40);
       g.fillStyle='#8B1A1A';g.font='bold 40px sans-serif';g.fillText(vnd(q.tien),W/2,y+90);
-      if(d.qr){const r=await goi('qrAnh',{tien:q.tien,nd:d.ma});if(!r.ok||!r.anh)throw 0;const im=await taiAnh(r.anh);g.drawImage(im,W/2-120,y+110,240,240);g.fillStyle='#4B5563';g.font='22px sans-serif';
+      if(d.qr){const r=await goi('qrAnh',{ma:d.ma,sdt:d.sdt});if(!r.ok||!r.anh)throw 0;const im=await taiAnh(r.anh);g.drawImage(im,W/2-120,y+110,240,240);g.fillStyle='#4B5563';g.font='22px sans-serif';
         g.fillText(d.qr.nganHang+' · '+d.qr.soTk+' · '+d.qr.chuTk,W/2,y+378);g.fillText('Nội dung chuyển khoản: '+d.ma,W/2,y+408);y+=440}else y+=140}
     g.fillStyle='#9CA3AF';g.font='22px sans-serif';g.fillText('Giá chưa bao gồm VAT và phí vận chuyển.',W/2,H-24);
     const blob=await new Promise(r=>c.toBlob(r,'image/png'));if(!blob)throw 0;
@@ -494,11 +502,17 @@ let choGhep=null;
 function apDung(ds){if(!$('#hopAnh').hidden){choGhep=ds;return}DS=ds;veTab();veDs();veThanh();if(!$('#hopGio').hidden&&$('#ghGui'))capSoGio()}
 
 /* ---------- Quản lý ---------- */
-const QL={tk:null,email:'',vaiTro:'',ds:[],khach:{},nguon:{},qr:null,trangThai:['Mới','Đã xác nhận','Chờ hàng','Đã giao','Hoàn tất','Hủy'],tab:'don',tim:'',moXong:false,moHuy:false,dangTai:false,mo:null,hang:Promise.resolve(),hoiHuy:false,hoiDat:false};
+const QL={tk:null,email:'',vaiTro:'',ds:[],chuan:{},khach:{},nguon:{},qr:null,trangThai:['Mới','Đã xác nhận','Chờ hàng','Đã giao','Hoàn tất','Hủy'],tab:'don',tim:'',moXong:false,moHuy:false,dangTai:false,dangLuu:0,mo:null,ctVe:null,hang:Promise.resolve(),hoiHuy:false,hoiDat:false,choSl:null,hoiBo:null,luuTt:'',gisXong:false,choTk:null};
+const saoChep=o=>JSON.parse(JSON.stringify(o));
 function docPhien(){const v=docLuu('qt_tk',null);return v&&v.exp*1000>Date.now()+60000?v.t:null}
 function xoaPhien(){QL.tk=null;try{localStorage.removeItem('qt_tk')}catch(e){}}
-function giaiJwt(t){try{const b=t.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');return JSON.parse(decodeURIComponent([...atob(b)].map(c=>'%'+c.charCodeAt(0).toString(16).padStart(2,'0')).join('')))}catch(e){return{}}}
+function giaiJwt(t){try{const b=String(t).split('.')[1].replace(/-/g,'+').replace(/_/g,'/');return JSON.parse(decodeURIComponent([...atob(b)].map(c=>'%'+c.charCodeAt(0).toString(16).padStart(2,'0')).join('')))}catch(e){return{}}}
+const tkConHan=()=>{const p=giaiJwt(QL.tk||'');return !!(p.exp&&p.exp*1000>Date.now()+60000)};
 function taiGis(){return new Promise((ok,loi)=>{if(window.google&&google.accounts&&google.accounts.id)return ok();const s=document.createElement('script');s.src='https://accounts.google.com/gsi/client';s.async=true;s.onload=ok;s.onerror=loi;document.head.appendChild(s)})}
+async function khoiGis(){await taiGis();if(QL.gisXong)return;google.accounts.id.initialize({client_id:GCID,callback:nhanTk,auto_select:true,cancel_on_tap_outside:false,itp_support:true});QL.gisXong=true}
+function lamMoiTk(){return new Promise(async res=>{let xong=false;const ket=v=>{if(!xong){xong=true;QL.choTk=null;res(v)}};QL.choTk=ket;setTimeout(()=>ket(false),9000);
+  try{await khoiGis();google.accounts.id.prompt(n=>{if(n&&(n.isNotDisplayed&&n.isNotDisplayed()||n.isSkippedMoment&&n.isSkippedMoment()))ket(false)})}catch(e){ket(false)}})}
+async function canTk(){if(QL.tk&&tkConHan())return true;return await lamMoiTk()&&tkConHan()}
 function theoHash(){
   const q=location.hash==='#quanly';
   $('#banHang').hidden=q;$('#ql').hidden=!q;veThanh();
@@ -513,28 +527,33 @@ async function veDangNhap(loi){
    <div id="gisNut" class="ql-gis"><span class="phu"><span class="ql-quay"></span>Đang tải nút đăng nhập…</span></div>
    ${loi?`<p class="gh-loi cau">${esc(loi)}</p>`:''}
    <p class="phu mo cau">Nếu đang mở trong Zalo, hãy chọn mở bằng trình duyệt (Safari hoặc Chrome) để đăng nhập.</p></div>`;
-  try{await taiGis();
-    google.accounts.id.initialize({client_id:GCID,callback:nhanTk,auto_select:true,cancel_on_tap_outside:false,itp_support:true});
-    $('#gisNut').innerHTML='';google.accounts.id.renderButton($('#gisNut'),{theme:'outline',size:'large',text:'signin_with',shape:'pill',locale:'vi',width:280});
+  try{await khoiGis();$('#gisNut').innerHTML='';
+    google.accounts.id.renderButton($('#gisNut'),{theme:'outline',size:'large',text:'signin_with',shape:'pill',locale:'vi',width:280});
     if(!loi)google.accounts.id.prompt();
   }catch(e){$('#gisNut').innerHTML='<p class="gh-loi cau">Chưa tải được nút đăng nhập Google. Hãy kiểm tra mạng rồi tải lại trang.</p>'}
 }
-function nhanTk(r){const p=giaiJwt(r.credential);QL.tk=r.credential;ghiLuu('qt_tk',{t:r.credential,exp:p.exp||0});taiDon()}
-function dangXuat(){xoaPhien();QL.ds=[];try{google.accounts.id.disableAutoSelect()}catch(e){}veDangNhap()}
+function nhanTk(r){const p=giaiJwt(r.credential);QL.tk=r.credential;ghiLuu('qt_tk',{t:r.credential,exp:p.exp||0});if(QL.choTk)QL.choTk(true);else taiDon()}
+function dangXuat(){xoaPhien();QL.ds=[];QL.chuan={};try{google.accounts.id.disableAutoSelect()}catch(e){}veDangNhap()}
+function hetPhien(loi){xoaPhien();if(!$('#hopDon').hidden)dongHop('hopDon');veDangNhap(loi||'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.')}
 async function taiDon(lang){
-  if(QL.dangTai)return;QL.dangTai=true;
+  if(QL.dangTai||(lang&&QL.dangLuu))return;QL.dangTai=true;
   if(!QL.ds.length&&!lang){$('#qlTab').innerHTML='';$('#qlThan').innerHTML='<p class="qt-trong phu cau"><span class="ql-quay"></span>Đang tải danh sách đơn…</p>'}
-  if(lang)$('#qlKeo').classList.add('on'),$('#qlKeo').innerHTML='<span class="phu"><span class="ql-quay"></span>Đang làm mới…</span>';
+  if(lang){$('#qlKeo').classList.add('on');$('#qlKeo').innerHTML='<span class="phu"><span class="ql-quay"></span>Đang làm mới…</span>'}
   try{
+    if(!await canTk()){hetPhien(QL.ds.length?'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.':'');return}
     const r=await goi('dsDon',{token:QL.tk});
-    if(!r.ok){if(r.canDangNhap){xoaPhien();QL.ds=[];veDangNhap(r.loi);return}throw new Error(r.loi||'')}
-    Object.assign(QL,{email:r.email,vaiTro:r.vaiTro,ds:r.don||[],khach:r.khach||{},nguon:r.nguon||{},qr:r.qr||null});
+    if(!r.ok){if(r.canDangNhap){hetPhien(r.loi);return}throw new Error(r.loi||'')}
+    if(lang&&QL.dangLuu)return; // đang lưu thì bỏ bản đọc cũ
+    const moi=(r.don||[]).map(d=>{const c=QL.chuan[d.ma];return c&&c.capNhat>d.capNhat?c:d});
+    QL.chuan={};moi.forEach(d=>{QL.chuan[d.ma]=saoChep(d)});
+    Object.assign(QL,{email:r.email,vaiTro:r.vaiTro,ds:moi.map(saoChep),khach:r.khach||{},nguon:r.nguon||{},qr:r.qr||null});
     if(r.trangThai)QL.trangThai=r.trangThai;
+    if(r.cauHinh)apCauHinh(r.cauHinh);
     if(QL.vaiTro!=='chu'&&QL.tab==='tien')QL.tab='don';
-    veQl();if(QL.mo&&!$('#hopDon').hidden&&!lang)veChiTiet();
+    veQl();if(QL.mo&&!$('#hopDon').hidden)capChiTiet();
   }catch(e){
     if(!QL.ds.length)$('#qlThan').innerHTML=`<div class="qt-trong"><p class="phu cau">Chưa tải được danh sách đơn. ${esc(e.message)}</p><button type="button" class="qt-phu" style="padding:0 20px" data-qltai>Thử lại</button></div>`;
-    else bao('Chưa làm mới được danh sách đơn. Sẽ tự thử lại sau ít phút.');
+    else if(!lang)bao('Chưa làm mới được danh sách đơn. Sẽ tự thử lại sau ít phút.');
   }finally{QL.dangTai=false;$('#qlKeo').classList.remove('on')}
 }
 const tongSet=d=>d.ct.reduce((s,l)=>s+l.sl,0);
@@ -551,30 +570,28 @@ function veQl(){
   const moi=QL.ds.filter(d=>d.trangThai==='Mới').length,canDat=QL.ds.filter(d=>d.trangThai==='Đã xác nhận').length;
   const tabs=[['don','Đơn hàng',moi],['dat','Cần đặt',canDat]];if(QL.vaiTro==='chu')tabs.push(['tien','Tiền',0]);
   $('#qlTab').innerHTML=`<div class="ql-tab" style="grid-template-columns:repeat(${tabs.length},1fr)" role="group" aria-label="Mục quản lý">${tabs.map(([k,t,n])=>`<button type="button" data-qltab="${k}" aria-pressed="${QL.tab===k}">${t}${n?`<span class="ql-so">${n}</span>`:''}</button>`).join('')}</div>`;
-  const giu=document.activeElement&&document.activeElement.id==='qlTim';
-  $('#qlThan').innerHTML=QL.tab==='don'?veTabDon():QL.tab==='dat'?veTabDat():veTabTien();
-  if(giu){const o=$('#qlTim');o.focus();o.setSelectionRange(o.value.length,o.value.length)}
+  if(QL.tab==='don'&&$('#qlDsDon')){$('#qlDsDon').innerHTML=dsTabDon()}
+  else $('#qlThan').innerHTML=QL.tab==='don'?veTabDon():QL.tab==='dat'?veTabDat():veTabTien();
   document.title=(moi?'('+moi+') ':'')+'Quản lý đơn – Quà Tết Tâm An';
 }
 function dongDon(d){const [cn,cc]=chip(d),ten=tenKhach(d);
   return `<button type="button" class="ql-dong" data-modon="${esc(d.ma)}"><div class="dong"><b>${esc(d.ma)}</b><span class="ten">${esc(ten||dinhSdt(d.sdt))}</span><b class="tien" style="margin-left:auto">${vnd(d.tong)}</b></div>
   <div class="dong phu"><span class="ten">${tongSet(d)} set · ${d.trangThai==='Mới'?ngayGio(d.tg):esc(d.trangThai)}</span><span class="ql-chip ${cc}">${esc(cn)}</span></div></button>`}
-function veTabDon(){
-  const q=boDau(QL.tim.trim()),loc_=d=>!q||boDau(d.ma+' '+d.sdt+' '+tenKhach(d)).includes(q);
-  const ds=QL.ds.filter(loc_);
+function veTabDon(){return `<div class="ql-tim"><input id="qlTim" class="gh-o" type="search" placeholder="Tìm theo mã đơn, số điện thoại, tên" value="${esc(QL.tim)}" aria-label="Tìm đơn" autocomplete="off"></div><div id="qlDsDon">${dsTabDon()}</div>`}
+function dsTabDon(){
+  const q=boDau(QL.tim.trim()),ds=QL.ds.filter(d=>!q||boDau(d.ma+' '+d.sdt+' '+tenKhach(d)).includes(q));
+  if(!QL.ds.length)return`<p class="qt-trong phu cau">Chưa có đơn nào. Đơn người mua gửi từ trang bán hàng sẽ hiện ở đây.</p>`;
+  if(!ds.length)return`<p class="qt-trong phu cau">Không tìm thấy đơn khớp với "${esc(QL.tim)}". Hãy thử số điện thoại đầy đủ hoặc mã đơn như TA0012.</p>`;
   const nh=[['Cần xác nhận',ds.filter(d=>d.trangThai==='Mới'),true],
     ['Đang xử lý',ds.filter(d=>['Đã xác nhận','Chờ hàng','Đã giao'].includes(d.trangThai)),true],
     ['Đã xong',ds.filter(d=>d.trangThai==='Hoàn tất'),QL.moXong||!!q,'xong'],
     ['Đã hủy',ds.filter(d=>d.trangThai==='Hủy'),QL.moHuy||!!q,'huy']];
-  let h=`<div class="ql-tim"><input id="qlTim" class="gh-o" type="search" placeholder="Tìm theo mã đơn, số điện thoại, tên" value="${esc(QL.tim)}" aria-label="Tìm đơn" autocomplete="off"></div>`;
-  if(!QL.ds.length)return h+`<p class="qt-trong phu cau">Chưa có đơn nào. Đơn người mua gửi từ trang bán hàng sẽ hiện ở đây.</p>`;
-  if(!ds.length)return h+`<p class="qt-trong phu cau">Không tìm thấy đơn khớp với "${esc(QL.tim)}". Hãy thử số điện thoại đầy đủ hoặc mã đơn như TA0012.</p>`;
-  nh.forEach(([t,l,mo,k])=>{if(!l.length)return;
+  let h='';nh.forEach(([t,l,mo,k])=>{if(!l.length)return;
     h+=k?`<button type="button" class="ql-nhom" data-qlgap="${k}" aria-expanded="${mo}">${t} (${l.length}) ${mo?'⌄':'›'}</button>`:`<div class="ql-nhom">${t} (${l.length})</div>`;
     if(mo)h+=`<div class="ql-ds">${l.map(dongDon).join('')}</div>`});
   return h;
 }
-function maShop(ma){const m=(QL.nguon[ma]||'').match(/Shop đăng (?:là )?(MQ\w+) lúc ([0-9/]+ [0-9:]+)/);return m?m[1]+' (bản đăng '+m[2]+')':ma}
+const maShop=ma=>QL.nguon[ma]||ma;
 function nhomDat(){const ds=QL.ds.filter(d=>d.trangThai==='Đã xác nhận'),m={};
   ds.forEach(d=>d.ct.forEach(l=>{const x=m[l.ma]||(m[l.ma]={ma:l.ma,ten:l.ten,sl:0,von:0,don:[]});x.sl+=l.sl;x.von+=(l.von||0)*l.sl;if(!x.don.includes(d.ma))x.don.push(d.ma)}));
   return{ds,L:Object.values(m).sort((a,b)=>a.ma.localeCompare(b.ma,'vi',{numeric:true}))}}
@@ -584,7 +601,7 @@ function veTabDat(){
   const tong=L.reduce((s,x)=>s+x.sl,0),von=L.reduce((s,x)=>s+x.von,0);
   return `<div class="the ql-the-so"><div class="phu">Cần đặt nhà cung cấp, gộp từ ${ds.length} đơn đã xác nhận</div><div class="so-chinh">${tong} set</div>${QL.vaiTro==='chu'?`<div class="phu mo">Tiền hàng đợt này <span class="tien">${vnd(von)}</span></div>`:''}</div>
   <div class="ql-ds">${L.map(x=>`<div class="ql-dong" style="min-height:0"><div class="dong"><span class="qt-ma lien">${esc(x.ma)}</span><span class="ten">${esc(x.ten)}</span><b class="tien" style="margin-left:auto">${x.sl} set</b></div>
-   <div class="phu cau">${QL.nguon[x.ma]&&/Shop đăng/.test(QL.nguon[x.ma])?'Đặt với shop là '+esc(maShop(x.ma))+'. ':''}Từ đơn ${x.don.map(esc).join(', ')}</div></div>`).join('')}</div>
+   <div class="phu cau">${QL.nguon[x.ma]?'Đặt với shop là '+esc(QL.nguon[x.ma])+'. ':''}Từ đơn ${x.don.map(esc).join(', ')}</div></div>`).join('')}</div>
   <div class="ql-dat"><button type="button" class="qt-phu" data-chepdat>Chép danh sách gửi nhà cung cấp</button>
   ${QL.hoiDat?`<div class="ql-hoi"><p class="cau" style="margin:0">Chuyển ${ds.length} đơn sang Chờ hàng? Chỉ chọn khi đã đặt xong với nhà cung cấp.</p><div class="gh-2nut"><button type="button" class="qt-chinhnut" data-dadat="1">Chuyển sang Chờ hàng</button><button type="button" class="qt-phu" data-dadat="0">Thôi</button></div></div>`
    :`<button type="button" class="qt-chinhnut" data-dadat="hoi">Đã đặt xong, chuyển sang Chờ hàng</button>`}</div>`;
@@ -593,88 +610,122 @@ function veTabTien(){
   const ds=QL.ds.filter(d=>d.trangThai!=='Hủy'&&d.trangThai!=='Mới');
   if(!ds.length)return`<p class="qt-trong phu cau">Chưa có đơn nào đã xác nhận để tính tiền. Đơn mới chỉ được tính khi chuyển sang Đã xác nhận.</p>`;
   const doanhThu=ds.reduce((s,d)=>s+d.tong,0),von=ds.reduce((s,d)=>s+(d.von||0),0),thu=ds.reduce((s,d)=>s+Math.min(d.daThu,d.tong),0),conThu=ds.reduce((s,d)=>s+Math.max(0,d.tong-d.daThu),0);
-  const daDat=ds.filter(d=>['Chờ hàng','Đã giao','Hoàn tất'].includes(d.trangThai)),phaiTra=daDat.reduce((s,d)=>s+(d.von||0),0),daTra=ds.reduce((s,d)=>s+(d.daTraNcc||0),0);
+  const daDat=QL.ds.filter(d=>['Chờ hàng','Đã giao','Hoàn tất'].includes(d.trangThai));
+  const phaiTra=daDat.reduce((s,d)=>s+Math.max(0,(d.von||0)-(d.daTraNcc||0)),0),daTra=daDat.reduce((s,d)=>s+(d.daTraNcc||0),0);
+  const traTruoc=QL.ds.filter(d=>!daDat.includes(d)).reduce((s,d)=>s+(d.daTraNcc||0),0);
+  const thieuVon=ds.reduce((s,d)=>s+d.ct.filter(l=>!l.von).length,0);
   const no={};ds.forEach(d=>{const c=d.tong-d.daThu;if(c<=0)return;const x=no[d.sdt]||(no[d.sdt]={sdt:d.sdt,c:0,n:0,coc:true,tt:d.trangThai,ma:d.ma});x.c+=c;x.n++;if(d.daThu<d.coc)x.coc=false;x.tt=d.trangThai;x.ma=d.ma});
   const L=Object.values(no).sort((a,b)=>b.c-a.c),pt=doanhThu?Math.round(thu/doanhThu*100):0;
   return `<div class="the ql-the-so"><div class="phu">Lãi mùa Tết 2027, tính đến hôm nay</div><div class="so-chinh tien" style="color:var(--tot)">${vnd(doanhThu-von)}</div>
    <div class="phu mo cau">Từ ${ds.length} đơn đã xác nhận, không tính đơn mới và đơn hủy. Chưa trừ VAT và phí vận chuyển.</div>
+   ${thieuVon?`<p class="gh-chuy cau">Có ${thieuVon} dòng hàng chưa có giá nhập trên Sheet tổng, nên lãi đang bị tính cao hơn thực tế.</p>`:''}
    <details class="ql-gap"><summary>Bóc tách ›</summary><div class="dong"><span>Tiền bán hàng</span><span class="tien">${vnd(doanhThu)}</span></div><div class="dong"><span>Tiền hàng nhà cung cấp</span><span class="tien">− ${vnd(von)}</span></div></details></div>
   <div class="the"><div class="dong"><b>Còn phải thu</b><b class="tien" style="margin-left:auto;color:var(--canh)">${vnd(conThu)}</b></div>
    <div class="ql-vach" role="img" aria-label="Đã thu ${pt}%"><i style="width:${pt}%"></i></div>
    <p class="phu cau" style="margin:0">Đã thu <span class="tien">${vnd(thu)}</span> trên <span class="tien">${vnd(doanhThu)}</span> (${pt}%)</p></div>
   ${L.length?`<div class="ql-nhom">Người đặt còn nợ (${L.length})</div><div class="ql-ds">${L.map(x=>{const k=QL.khach[x.sdt];return`<button type="button" class="ql-dong" data-modon="${esc(x.ma)}"><div class="dong"><span class="ten">${esc(k&&k.ten||dinhSdt(x.sdt))}</span><b class="tien" style="margin-left:auto">${vnd(x.c)}</b></div><div class="dong phu"><span class="ten">${x.n} đơn · ${esc(x.tt)}</span><span class="ql-chip ${x.coc?'c-ok':'c-no'}">${x.coc?'Đã cọc':'Chưa cọc đủ'}</span></div></button>`}).join('')}</div>`:''}
-  <div class="the" style="margin-top:12px"><div class="dong"><b class="ten">Còn phải trả nhà cung cấp</b><b class="tien" style="margin-left:auto">${vnd(Math.max(0,phaiTra-daTra))}</b></div>
-   <div class="phu cau">Tính trên ${daDat.length} đơn đã đặt nhà cung cấp. Đã trả ${vnd(daTra)}. Ghi số đã trả ở từng đơn.</div></div>`;
+  <div class="the" style="margin-top:12px"><div class="dong"><b class="ten">Còn phải trả nhà cung cấp</b><b class="tien" style="margin-left:auto">${vnd(phaiTra)}</b></div>
+   <div class="phu cau">Tính trên ${daDat.length} đơn đã đặt nhà cung cấp, đã trả ${vnd(daTra)}. Ghi số đã trả ở từng đơn.${traTruoc?` Có ${vnd(traTruoc)} đã trả cho đơn chưa đặt hoặc đã hủy, chưa tính vào đây.`:''}</div></div>`;
 }
 /* Chi tiết đơn */
-function moChiTiet(ma){QL.mo=ma;QL.hoiHuy=false;QL.luuTt='';veChiTiet();moHop('hopDon')}
+function moChiTiet(ma){xaSl(true);QL.mo=ma;QL.hoiHuy=false;QL.hoiBo=null;QL.luuTt='';QL.ctVe=null;veChiTiet();moHop('hopDon')}
 function veChiTiet(){
   const d=QL.ds.find(x=>x.ma===QL.mo);if(!d)return;
-  const kh=QL.khach[d.sdt]||{},chu=QL.vaiTro==='chu',[cn,cc]=chip(d),k=$('#qlKhung'),cu=k.scrollTop;
-  k.innerHTML=`<div class="dong qt-hd"><b style="font-size:18px;flex:none">${esc(d.ma)}</b><span class="ql-chip ${cc}" style="margin-left:8px">${esc(cn)}</span><button type="button" class="qt-dong-x" data-donghop="hopDon" aria-label="Đóng">×</button></div>
-  <p class="phu cau" style="margin:0">${ngayDu(d.tg)} · ${d.capNhatBoi&&d.capNhatBoi!=='Đặt qua app'?'Sửa lần cuối bởi '+esc(d.capNhatBoi.split('@')[0])+' lúc '+ngayGio(d.capNhat):'Đặt qua app'}</p>
+  const k=$('#qlKhung'),cu=k.scrollTop,cungDon=QL.ctVe===d.ma,giuTen=cungDon&&$('#ctTen')?$('#ctTen').value:null,giuGhi=cungDon&&$('#ctGhi')?$('#ctGhi').value:null;
+  const kh=QL.khach[d.sdt]||{},chu=QL.vaiTro==='chu';
+  k.innerHTML=`<div class="dong qt-hd"><b style="font-size:18px;flex:none">${esc(d.ma)}</b><span class="ql-chip" id="ctChip" style="margin-left:8px"></span><button type="button" class="qt-dong-x" data-donghop="hopDon" aria-label="Đóng">×</button></div>
+  <p class="phu cau" style="margin:0" id="ctSua"></p>
   <label class="gh-nhan" for="ctTen">Tên người đặt</label>
   <input id="ctTen" class="gh-o" value="${esc(kh.ten||'')}" placeholder="Ví dụ Chị Lan Bắc Ninh" maxlength="80" autocomplete="off">
   <div class="gh-2nut" style="margin-top:8px"><a class="qt-phu" href="tel:${esc(d.sdt)}">Gọi ${esc(dinhSdt(d.sdt))}</a><a class="qt-zalo" href="https://zalo.me/${esc(d.sdt)}" target="_blank" rel="noopener">Nhắn Zalo</a></div>
-  <div class="ql-khoi">${d.ct.map(l=>`<div class="dong ql-hang" data-ctma="${esc(l.ma)}" style="margin:6px 0"><span class="qt-ma lien">${esc(l.ma)}</span><span class="ten">${esc(l.ten)}</span>
-   <div class="gh-buoc"><button type="button" data-ctcong="-1" aria-label="Bớt 1 set">−</button><input type="number" inputmode="numeric" min="0" max="9999" value="${l.sl}" aria-label="Số lượng ${esc(l.ma)}" data-ctsl><button type="button" data-ctcong="1" aria-label="Thêm 1 set">+</button></div></div>`).join('')}
-   <p class="phu cau" style="margin:4px 0 0">Đơn giá giữ theo lúc đặt. Muốn bỏ một mẫu thì đặt số lượng về 0.</p></div>
+  <div class="ql-khoi" id="ctHang"></div>
   <div class="ql-khoi">
-   <div class="dong"><span>Tổng tiền</span><b class="tien">${vnd(d.tong)}</b></div>
-   <div class="dong"><label for="ctCoc">Cọc phải thu</label><input id="ctCoc" class="ql-so-o" inputmode="numeric" value="${soVn(d.coc)}" data-tien="coc"></div>
-   <div class="dong"><label for="ctThu">Đã thu</label><input id="ctThu" class="ql-so-o" inputmode="numeric" value="${soVn(d.daThu)}" data-tien="daThu"></div>
-   <div class="dong"><span>Còn phải thu</span><b class="tien" style="color:${d.tong-d.daThu>0?'var(--canh)':'var(--tot)'}">${vnd(Math.max(0,d.tong-d.daThu))}</b></div>
-   ${chu?`<div class="dong phu"><span>Lãi đơn này</span><span class="tien">${vnd(d.tong-(d.von||0))}</span></div>
-   <div class="dong"><label for="ctNcc" class="cau">Đã trả nhà cung cấp<br><span class="phu">Tiền hàng ${vnd(d.von||0)}</span></label><input id="ctNcc" class="ql-so-o" inputmode="numeric" value="${soVn(d.daTraNcc||0)}" data-tien="daTraNcc"></div>`:''}
+   <div class="dong"><span>Tổng tiền</span><b class="tien" id="ctTong"></b></div>
+   <div class="dong"><label for="ctCoc">Cọc phải thu</label><input id="ctCoc" class="ql-so-o" inputmode="numeric" data-tien="coc"></div>
+   <div class="dong"><label for="ctThu">Đã thu</label><input id="ctThu" class="ql-so-o" inputmode="numeric" data-tien="daThu"></div>
+   <div class="dong"><span>Còn phải thu</span><b class="tien" id="ctCon"></b></div>
+   ${chu?`<div class="dong phu"><span>Lãi đơn này</span><span class="tien" id="ctLai"></span></div>
+   <div class="dong"><label for="ctNcc" class="cau">Đã trả nhà cung cấp<br><span class="phu" id="ctVon"></span></label><input id="ctNcc" class="ql-so-o" inputmode="numeric" data-tien="daTraNcc"></div>`:''}
   </div>
   <p class="gh-nhan">Tình trạng</p>
-  <div class="ql-tt" role="group" aria-label="Tình trạng đơn">${QL.trangThai.map(t=>`<button type="button" data-cttt="${esc(t)}" aria-pressed="${d.trangThai===t}">${esc(t)}</button>`).join('')}</div>
-  ${QL.hoiHuy?`<div class="ql-hoi"><p class="cau" style="margin:0">Hủy đơn ${esc(d.ma)}? Đơn hủy không tính vào tiền và số cần đặt. Có thể chuyển lại tình trạng khác sau.</p><div class="gh-2nut"><button type="button" class="ql-xau" data-huy="1">Hủy đơn</button><button type="button" class="qt-phu" data-huy="0">Thôi</button></div></div>`:''}
+  <div class="ql-tt" role="group" aria-label="Tình trạng đơn">${QL.trangThai.map(t=>`<button type="button" data-cttt="${esc(t)}">${esc(t)}</button>`).join('')}</div>
+  <div id="ctHoiHuy"></div>
   <label class="gh-nhan" for="ctGhi">Ghi chú</label>
   <textarea id="ctGhi" class="gh-o" rows="2" maxlength="1000" placeholder="Ví dụ giao trước 20 tháng Chạp">${esc(d.ghiChu)}</textarea>
-  <div class="gh-day"><button type="button" class="qt-phu" data-xemphieu="${esc(d.ma)}">Xem phiếu gửi người đặt</button><p class="ql-luu phu" id="ctLuu" aria-live="polite">${QL.luuTt||''}</p></div>`;
-  k.scrollTop=cu;
+  <div class="gh-day"><button type="button" class="qt-phu" data-xemphieu="${esc(d.ma)}">Xem phiếu gửi người đặt</button><p class="ql-luu phu" id="ctLuu" aria-live="polite"></p></div>`;
+  veHang(d);capChiTiet();
+  if(giuTen!==null)$('#ctTen').value=giuTen;if(giuGhi!==null)$('#ctGhi').value=giuGhi;
+  QL.ctVe=d.ma;k.scrollTop=cu;
 }
-function trangLuu(t,ok){QL.luuTt=t;const e=$('#ctLuu');if(e){e.textContent=t;e.classList.toggle('ok',!!ok)}}
+function veHang(d){$('#ctHang').innerHTML=d.ct.map(l=>`<div class="dong ql-hang" data-ctma="${esc(l.ma)}" style="margin:6px 0"><span class="qt-ma lien">${esc(l.ma)}</span><span class="ten">${esc(l.ten)}</span>
+   <div class="gh-buoc"><button type="button" data-ctcong="-1" aria-label="Bớt 1 set">−</button><input type="number" inputmode="numeric" min="0" max="9999" value="${l.sl}" aria-label="Số lượng ${esc(l.ma)}" data-ctsl><button type="button" data-ctcong="1" aria-label="Thêm 1 set">+</button></div></div>`).join('')+
+   (QL.hoiBo&&QL.hoiBo.ma===d.ma?`<div class="ql-hoi"><p class="cau" style="margin:0">Bỏ ${esc(QL.hoiBo.dong.filter(x=>!x.sl).map(x=>x.ma).join(', '))} khỏi đơn ${esc(d.ma)}? Sau khi bỏ sẽ không thêm lại được vào đơn này.</p><div class="gh-2nut"><button type="button" class="ql-xau" data-bomau="1">Bỏ mẫu</button><button type="button" class="qt-phu" data-bomau="0">Thôi</button></div></div>`
+   :`<p class="phu cau" style="margin:4px 0 0">Đơn giá giữ theo lúc đặt. Muốn bỏ một mẫu thì đặt số lượng về 0.</p>`)}
+function capChiTiet(){
+  const d=QL.ds.find(x=>x.ma===QL.mo);if(!d||!$('#ctTong'))return;
+  const [cn,cc]=chip(d),con=Math.max(0,d.tong-d.daThu),dat=(id,v)=>{const e=$(id);if(e&&document.activeElement!==e)e.value=v};
+  const c=$('#ctChip');c.className='ql-chip '+cc;c.textContent=cn;
+  $('#ctSua').textContent=ngayDu(d.tg)+' · '+(d.capNhatBoi&&d.capNhatBoi!=='Đặt qua app'?'Sửa lần cuối bởi '+d.capNhatBoi.split('@')[0]+' lúc '+ngayGio(d.capNhat):'Đặt qua app');
+  $('#ctTong').textContent=vnd(d.tong);$('#ctCon').textContent=vnd(con);$('#ctCon').style.color=con>0?'var(--canh)':'var(--tot)';
+  dat('#ctCoc',soVn(d.coc));dat('#ctThu',soVn(d.daThu));
+  if($('#ctLai')){$('#ctLai').textContent=vnd(d.tong-(d.von||0));$('#ctVon').textContent='Tiền hàng '+vnd(d.von||0);dat('#ctNcc',soVn(d.daTraNcc||0))}
+  document.querySelectorAll('[data-cttt]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.cttt===d.trangThai));
+  $('#ctHoiHuy').innerHTML=QL.hoiHuy?`<div class="ql-hoi"><p class="cau" style="margin:0">Hủy đơn ${esc(d.ma)}? Đơn hủy không tính vào tiền và số cần đặt. Có thể chuyển lại tình trạng khác sau.</p><div class="gh-2nut"><button type="button" class="ql-xau" data-huy="1">Hủy đơn</button><button type="button" class="qt-phu" data-huy="0">Thôi</button></div></div>`:'';
+  const sl=[...document.querySelectorAll('[data-ctma]')];
+  if(!QL.choSl&&!QL.hoiBo)sl.forEach(el=>{const l=d.ct.find(y=>y.ma===el.dataset.ctma),o=el.querySelector('[data-ctsl]');if(l&&document.activeElement!==o)o.value=l.sl});
+  if(sl.length!==d.ct.length||sl.some(el=>!d.ct.find(y=>y.ma===el.dataset.ctma)))veHang(d);
+  trangLuu(QL.luuTt,QL.luuTt.startsWith('✓'));
+}
+function trangLuu(t,ok){QL.luuTt=t||'';const e=$('#ctLuu');if(e){e.textContent=QL.luuTt;e.classList.toggle('ok',!!ok)}}
 function apThay(d,t){
   if(t.trangThai!==undefined)d.trangThai=t.trangThai;
   if(t.dong){const cocCu=lamTron(d.tong*TI_LE_COC);t.dong.forEach(x=>{const l=d.ct.find(y=>y.ma===x.ma);if(l)l.sl=x.sl});d.ct=d.ct.filter(l=>l.sl>0);
     d.tong=d.ct.reduce((s,l)=>s+l.sl*l.gia,0);if(d.von!==undefined)d.von=d.ct.reduce((s,l)=>s+l.sl*(l.von||0),0);if(t.coc===undefined&&d.coc===cocCu)d.coc=lamTron(d.tong*TI_LE_COC)}
   ['coc','daThu','daTraNcc','ghiChu'].forEach(k=>{if(t[k]!==undefined)d[k]=t[k]});
 }
+function veLai(ma){const i=QL.ds.findIndex(x=>x.ma===ma),c=QL.chuan[ma];if(i>=0&&c)QL.ds[i]=saoChep(c);veQl();if(QL.mo===ma&&!$('#hopDon').hidden){QL.hoiBo=null;veHang(QL.ds[i]||{ct:[]});capChiTiet()}}
 function luuDon(ma,thay,hoanTac){
   const d=QL.ds.find(x=>x.ma===ma);if(!d)return Promise.resolve();
-  const truoc=JSON.parse(JSON.stringify(d));apThay(d,thay);veQl();if(QL.mo===ma&&!$('#hopDon').hidden)veChiTiet();
-  trangLuu('Đang lưu…');
+  const truocKhiSua=saoChep(QL.chuan[ma]||d);
+  apThay(d,thay);veQl();if(QL.mo===ma&&!$('#hopDon').hidden)capChiTiet();
+  QL.dangLuu++;trangLuu('Đang lưu…');
   return QL.hang=QL.hang.then(async()=>{
-    const hien=QL.ds.find(x=>x.ma===ma);
-    try{const r=await goi('suaDon',{token:QL.tk,ma,phien:hien?hien.capNhat:0,thay});
-      if(!r.ok){if(r.canDangNhap){xoaPhien();dongHop('hopDon');veDangNhap(r.loi);return}
-        if(r.xungDot&&r.don){thayDon(r.don);trangLuu('');bao(r.loi);if(QL.mo===ma)veChiTiet();return}throw new Error(r.loi||'')}
-      thayDon(r.don);trangLuu('✓ Đã lưu',true);
-      if(hoanTac)baoHoanTac(hoanTac,()=>{const hoan={};Object.keys(thay).forEach(k=>{hoan[k]=truoc[k]});luuDon(ma,hoan)});
-    }catch(e){const i=QL.ds.findIndex(x=>x.ma===ma);if(i>=0)QL.ds[i]=truoc;trangLuu('');bao('Chưa lưu được. '+(e.message||'')+' Đã trả lại số cũ.');veQl();if(QL.mo===ma)veChiTiet()}
+    try{
+      if(!await canTk()){veLai(ma);bao('Phiên đăng nhập đã hết hạn nên số vừa sửa chưa được lưu. Vui lòng đăng nhập lại.');hetPhien();return}
+      const r=await goi('suaDon',{token:QL.tk,ma,phien:QL.chuan[ma]?QL.chuan[ma].capNhat:0,thay});
+      if(!r.ok){
+        if(r.canDangNhap){veLai(ma);bao('Phiên đăng nhập đã hết hạn nên số vừa sửa chưa được lưu. Vui lòng đăng nhập lại.');hetPhien(r.loi);return}
+        if(r.xungDot&&r.don){QL.chuan[ma]=saoChep(r.don);veLai(ma);trangLuu('');bao(r.loi);if(QL.mo===ma&&!$('#hopDon').hidden)veChiTiet();return}
+        throw new Error(r.loi||'')}
+      QL.chuan[ma]=saoChep(r.don);
+      const i=QL.ds.findIndex(x=>x.ma===ma);if(i>=0){const hien=QL.ds[i];QL.ds[i]=saoChep(r.don);if(QL.dangLuu>1)QL.ds[i]=hien;}
+      veQl();if(QL.mo===ma&&!$('#hopDon').hidden)capChiTiet();trangLuu('✓ Đã lưu',true);
+      if(hoanTac)baoHoanTac(hoanTac,()=>{const hoan={};Object.keys(thay).forEach(k=>{hoan[k]=truocKhiSua[k]});luuDon(ma,hoan)});
+    }catch(e){veLai(ma);trangLuu('');bao('Chưa lưu được. '+(e.message||'')+' Đã trả lại số cũ.')}
+    finally{QL.dangLuu--;if(!QL.dangLuu){const i=QL.ds.findIndex(x=>x.ma===ma);if(i>=0&&QL.chuan[ma]&&QL.chuan[ma].capNhat>=QL.ds[i].capNhat){/* đồng bộ bản cuối */QL.ds[i]=saoChep(QL.chuan[ma]);veQl();if(QL.mo===ma&&!$('#hopDon').hidden)capChiTiet()}}}
   });
 }
-function thayDon(n){const i=QL.ds.findIndex(x=>x.ma===n.ma);if(i>=0)QL.ds[i]=n;else QL.ds.unshift(n);veQl();if(QL.mo===n.ma&&!$('#hopDon').hidden)veChiTiet()}
 async function luuTen(sdt,ten){
   const cu=QL.khach[sdt]||{ten:'',ghiChu:''};if(cu.ten===ten)return;
   QL.khach[sdt]={ten,ghiChu:cu.ghiChu||''};veQl();trangLuu('Đang lưu…');
-  try{const r=await goi('luuKhach',{token:QL.tk,sdt,ten,ghiChu:cu.ghiChu||''});if(!r.ok)throw new Error(r.loi||'');trangLuu('✓ Đã lưu',true)}
-  catch(e){QL.khach[sdt]=cu;veQl();trangLuu('');bao('Chưa lưu được tên. '+(e.message||''))}
+  try{if(!await canTk())throw new Error('Phiên đăng nhập đã hết hạn.');const r=await goi('luuKhach',{token:QL.tk,sdt,ten,ghiChu:cu.ghiChu||''});if(!r.ok)throw new Error(r.loi||'');trangLuu('✓ Đã lưu',true)}
+  catch(e){QL.khach[sdt]=cu;veQl();if(QL.mo&&$('#ctTen'))$('#ctTen').value=cu.ten;trangLuu('');bao('Chưa lưu được tên. '+(e.message||''))}
 }
-let _hen={};
-function henLuuSl(ma){clearTimeout(_hen[ma]);_hen[ma]=setTimeout(()=>{const d=QL.ds.find(x=>x.ma===ma);if(!d)return;
+/* Số lượng trong chi tiết: chụp ngay lúc bấm, lưu sau 0,9 giây hoặc khi rời đơn */
+let _henSl=null;
+function ghiSl(){const ma=QL.mo,d=QL.ds.find(x=>x.ma===ma);if(!d)return;
   const dong=[...document.querySelectorAll('[data-ctma]')].map(el=>({ma:el.dataset.ctma,sl:Math.max(0,Math.min(9999,Math.floor(Number(el.querySelector('[data-ctsl]').value)||0)))}));
-  if(dong.every(x=>x.sl===0)){bao('Đơn phải còn ít nhất 1 mẫu. Muốn bỏ cả đơn thì chọn tình trạng Hủy.');veChiTiet();return}
-  if(dong.every(x=>{const l=d.ct.find(y=>y.ma===x.ma);return l&&l.sl===x.sl}))return;
-  luuDon(ma,{dong})},900)}
+  QL.choSl={ma,dong};clearTimeout(_henSl);_henSl=setTimeout(xaSl,900)}
+function xaSl(dangDong){clearTimeout(_henSl);const c=QL.choSl;QL.choSl=null;if(!c)return;const d=QL.ds.find(x=>x.ma===c.ma);if(!d)return;
+  if(c.dong.every(x=>{const l=d.ct.find(y=>y.ma===x.ma);return l&&l.sl===x.sl}))return;
+  if(c.dong.every(x=>x.sl===0)){bao('Đơn phải còn ít nhất 1 mẫu. Muốn bỏ cả đơn thì chọn tình trạng Hủy.');if(QL.mo===c.ma)veHang(d);return}
+  if(c.dong.some(x=>x.sl===0)){if(dangDong){bao('Chưa bỏ mẫu nào khỏi đơn '+c.ma+' vì cần xác nhận. Mở lại đơn nếu muốn bỏ.');return}if(QL.mo===c.ma&&!$('#hopDon').hidden){QL.hoiBo=c;veHang(d);c.dong.forEach(x=>{const el=document.querySelector(`[data-ctma="${CSS.escape(x.ma)}"] [data-ctsl]`);if(el)el.value=x.sl})}return}
+  luuDon(c.ma,{dong:c.dong})}
 async function daDatXong(){
-  const {ds}=nhomDat();QL.hoiDat=false;
+  const {ds}=nhomDat();QL.hoiDat=false;veQl();
   for(const d of ds)await luuDon(d.ma,{trangThai:'Chờ hàng'});
   bao('Đã chuyển '+ds.length+' đơn sang Chờ hàng.');veQl();
 }
-
 /* ---------- Sự kiện ---------- */
 document.addEventListener('click',async e=>{
   const g=s=>e.target.closest(s);let t;
@@ -683,31 +734,33 @@ document.addEventListener('click',async e=>{
   if(t=g('[data-donghop]')){dongHop(t.dataset.donghop);return}
   if(e.target.classList.contains('hop')){dongHop(e.target.id);return}
   if(t=g('[data-taiall]')){const d=DS[+t.dataset.taiall];
-    d.imgs.forEach((m,k)=>setTimeout(()=>{const a=document.createElement('a');a.href=m.src;a.download=tenTep(d,k);document.body.appendChild(a);a.click();a.remove()},k*700));
+    d.imgs.forEach((m,k)=>setTimeout(()=>{const a=document.createElement('a');a.href=urlAnh(m.src);a.download=tenTep(d,k);document.body.appendChild(a);a.click();a.remove()},k*700));
     bao('Đang tải '+d.imgs.length+' ảnh về máy.');return}
   if(t=g('[data-them]')){themGio(t.dataset.them);return}
   if(g('[data-mogio]')){moGio();return}
   if(g('[data-dondagui]')){$('#ghKhung').innerHTML=hdHop('Đơn đã gửi','hopGio')+(dsDonCu()||'<p class="qt-trong phu cau">Máy này chưa gửi đơn nào.</p>');moHop('hopGio');return}
   if(t=g('[data-cong]')){const r=t.closest('[data-ghma]'),o=r.querySelector('[data-ghsl]'),v=(Number(o.value)||0)+Number(t.dataset.cong);o.value=Math.max(0,v);datSl(r.dataset.ghma,v);return}
   if(g('#ghGui')){guiDon();return}
-  if(t=g('[data-phieucu]')){const ds=docLuu('qt_don',[]);const d=ds[+t.dataset.phieucu];if(d)vePhieu(d,{hop:'hopGio'});return}
+  if(t=g('[data-phieucu]')){const d=donCu()[+t.dataset.phieucu];if(d)vePhieu(d,{hop:'hopGio'});return}
   if(g('[data-luuphieu]')){luuAnhPhieu();return}
-  if(t=g('[data-zaloph]')){const d=PHIEU;if(!d)return;const ok=await chep(chuPhieu(d));
-    if(t.dataset.zaloph==='tamAn'){window.open(ZALO,'_blank','noopener');if(ok)bao('Đã chép sẵn nội dung đơn. Trong Zalo, dán vào ô chat rồi gửi.')}
-    else{window.open('https://zalo.me/'+d.sdt,'_blank','noopener');if(ok)bao('Đã chép sẵn nội dung phiếu. Trong Zalo, dán vào ô chat rồi gửi kèm ảnh phiếu.')}return}
+  if(t=g('[data-zaloph]')){const d=PHIEU;if(!d)return;const hua=chep(chuPhieu(d)),toi=t.dataset.zaloph==='tamAn';
+    window.open(toi?ZALO:'https://zalo.me/'+d.sdt,'_blank','noopener');
+    hua.then(ok=>{if(ok)bao(toi?'Đã chép sẵn nội dung đơn. Trong Zalo, dán vào ô chat rồi gửi.':'Đã chép sẵn nội dung phiếu. Trong Zalo, dán vào ô chat rồi gửi kèm ảnh phiếu.')});return}
   if(g('[data-moql]')){e.preventDefault();location.hash='quanly';return}
-  if(g('[data-ve]')){location.hash='';history.replaceState(null,'',location.pathname+location.search);theoHash();return}
+  if(g('[data-ve]')){history.replaceState(null,'',location.pathname+location.search);theoHash();return}
   if(g('[data-dangxuat]')){dangXuat();return}
   if(g('[data-qltai]')){taiDon();return}
-  if(t=g('[data-qltab]')){QL.tab=t.dataset.qltab;QL.hoiDat=false;veQl();window.scrollTo(0,0);return}
+  if(t=g('[data-qltab]')){QL.tab=t.dataset.qltab;QL.hoiDat=false;$('#qlThan').innerHTML='';veQl();window.scrollTo(0,0);return}
   if(t=g('[data-qlgap]')){if(t.dataset.qlgap==='xong')QL.moXong=!QL.moXong;else QL.moHuy=!QL.moHuy;veQl();return}
   if(t=g('[data-modon]')){moChiTiet(t.dataset.modon);return}
-  if(t=g('[data-ctcong]')){const r=t.closest('[data-ctma]'),o=r.querySelector('[data-ctsl]');o.value=Math.max(0,(Number(o.value)||0)+Number(t.dataset.ctcong));henLuuSl(QL.mo);return}
-  if(t=g('[data-cttt]')){const d=QL.ds.find(x=>x.ma===QL.mo);if(!d||d.trangThai===t.dataset.cttt)return;
-    if(t.dataset.cttt==='Hủy'){QL.hoiHuy=true;veChiTiet();return}QL.hoiHuy=false;luuDon(d.ma,{trangThai:t.dataset.cttt});return}
-  if(t=g('[data-huy]')){QL.hoiHuy=false;if(t.dataset.huy==='1')luuDon(QL.mo,{trangThai:'Hủy'});else veChiTiet();return}
-  if(t=g('[data-xemphieu]')){const d=QL.ds.find(x=>x.ma===t.dataset.xemphieu);if(!d)return;
-    vePhieu({ma:d.ma,sdt:d.sdt,tg:ngayDu(d.tg),dong:d.ct,tong:d.tong,coc:d.coc,daThu:d.daThu,qr:QL.qr},{hop:'hopDon'});
+  if(t=g('[data-ctcong]')){const r=t.closest('[data-ctma]'),o=r.querySelector('[data-ctsl]');o.value=Math.max(0,(Number(o.value)||0)+Number(t.dataset.ctcong));ghiSl();return}
+  if(t=g('[data-bomau]')){const c=QL.hoiBo;QL.hoiBo=null;const d=QL.ds.find(x=>x.ma===QL.mo);if(!d)return;
+    if(t.dataset.bomau==='1'&&c&&c.ma===d.ma)luuDon(d.ma,{dong:c.dong});veHang(d);capChiTiet();return}
+  if(t=g('[data-cttt]')){xaSl();const d=QL.ds.find(x=>x.ma===QL.mo);if(!d||d.trangThai===t.dataset.cttt)return;
+    if(t.dataset.cttt==='Hủy'){QL.hoiHuy=true;capChiTiet();return}QL.hoiHuy=false;luuDon(d.ma,{trangThai:t.dataset.cttt});return}
+  if(t=g('[data-huy]')){QL.hoiHuy=false;if(t.dataset.huy==='1')luuDon(QL.mo,{trangThai:'Hủy'});else capChiTiet();return}
+  if(t=g('[data-xemphieu]')){xaSl(true);const d=QL.ds.find(x=>x.ma===t.dataset.xemphieu);if(!d)return;
+    vePhieu({ma:d.ma,sdt:d.sdt,tg:ngayDu(d.tg),dong:d.ct,tong:d.tong,coc:d.coc,daThu:d.daThu,qr:QL.qr},{hop:'hopDon'});QL.ctVe=null;
     $('#qlKhung').querySelector('.qt-hd').insertAdjacentHTML('afterbegin','<button type="button" class="ql-ve" data-vect style="margin-right:8px">‹ Đơn</button>');return}
   if(g('[data-vect]')){veChiTiet();return}
   if(g('[data-chepdat]')){const {L}=nhomDat();const ok=await chep('Tâm An đặt hàng:\n'+L.map(x=>`${maShop(x.ma)}: ${x.sl} set`).join('\n')+`\nTổng ${L.reduce((s,x)=>s+x.sl,0)} set`);bao(ok?'Đã chép danh sách. Dán vào Zalo để gửi nhà cung cấp.':'Chưa chép được. Hãy giữ ngón tay vào danh sách để chép.');return}
@@ -717,14 +770,15 @@ document.addEventListener('click',async e=>{
 document.addEventListener('input',e=>{
   const t=e.target;
   if(t.matches('[data-ghsl]')){const r=t.closest('[data-ghma]');if(t.value!=='')datSl(r.dataset.ghma,t.value,true);return}
-  if(t.id==='qlTim'){QL.tim=t.value;veQl();return}
-  if(t.matches('[data-ctsl]')){henLuuSl(QL.mo);return}
+  if(t.id==='qlTim'){QL.tim=t.value;if(!e.isComposing&&$('#qlDsDon'))$('#qlDsDon').innerHTML=dsTabDon();return}
+  if(t.matches('[data-ctsl]')){ghiSl();return}
   if(t.matches('[data-tien]')){const v=so(t.value);t.value=v?soVn(v):'';return}
 });
+document.addEventListener('compositionend',e=>{if(e.target.id==='qlTim'){QL.tim=e.target.value;if($('#qlDsDon'))$('#qlDsDon').innerHTML=dsTabDon()}});
 document.addEventListener('change',e=>{
   const t=e.target,d=QL.ds.find(x=>x.ma===QL.mo);
   if(t.matches('[data-ghsl]')){const r=t.closest('[data-ghma]');datSl(r.dataset.ghma,t.value);return}
-  if(!d)return;
+  if(!d||$('#hopDon').hidden)return;
   if(t.id==='ctTen'){luuTen(d.sdt,t.value.trim().slice(0,80));return}
   if(t.id==='ctGhi'){if(t.value!==d.ghiChu)luuDon(d.ma,{ghiChu:t.value});return}
   if(t.matches('[data-tien]')){const k=t.dataset.tien,v=so(t.value);if(v===d[k])return;
