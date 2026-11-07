@@ -231,7 +231,7 @@ button.ql-nhom{background:none;border:0;padding:0;min-height:32px;width:calc(100
   <div class="ql-keo" id="qlKeo"></div>
   <div id="qlTab"></div>
   <main id="qlThan"></main>
-  <footer class="qt-cuoi phu mo cau"><span data-pb>Phiên bản 2.0</span><br><button type="button" class="qt-loi-link" data-dangxuat>Đăng xuất</button></footer>
+  <footer class="qt-cuoi phu mo cau"><span data-pb>Phiên bản 2.0</span><br><button type="button" class="qt-loi-link" data-dangxuat id="qlXuat" hidden>Đăng xuất</button></footer>
 </section>
 
 <div class="gh-thanh" id="ghThanh" hidden></div>
@@ -434,7 +434,7 @@ function vePhieu(d,o){
   $('#'+o.hop+' .khung').scrollTop=0;
 }
 function chuPhieu(d){const q=tienQr(d);return `Quà Tết Tâm An – đơn ${d.ma} (SĐT ${dinhSdt(d.sdt)})\n`+d.dong.map(l=>`${l.ma} ${l.ten} × ${l.sl}: ${vnd(l.sl*l.gia)}`).join('\n')+`\nTổng tiền: ${vnd(d.tong)}`+(q?`\n${q.nhan.replace('Quét mã để ','Cần ')}: ${vnd(q.tien)}`:'')+`\nGiá chưa bao gồm VAT và phí vận chuyển.`}
-function taiAnh(src){return new Promise((ok,loi)=>{const i=new Image();i.crossOrigin='anonymous';i.onload=()=>ok(i);i.onerror=loi;i.src=src})}
+function taiAnh(src){return new Promise((ok,loi)=>{const i=new Image();i.onload=()=>ok(i);i.onerror=loi;i.src=src})}
 async function luuAnhPhieu(){
   const d=PHIEU;if(!d)return;const q=tienQr(d);
   try{
@@ -453,7 +453,7 @@ async function luuAnhPhieu(){
     g.textAlign='center';
     if(q){g.fillStyle='#FDF3F0';g.fillRect(pad,y,W-2*pad,d.qr?420:120);g.fillStyle='#4B5563';g.font='24px sans-serif';g.fillText(d.qr?q.nhan:q.nhan.replace('Quét mã để','Số tiền'),W/2,y+40);
       g.fillStyle='#8B1A1A';g.font='bold 40px sans-serif';g.fillText(vnd(q.tien),W/2,y+90);
-      if(d.qr){const im=await taiAnh(qrUrl(d.qr,q.tien,d.ma));g.drawImage(im,W/2-120,y+110,240,240);g.fillStyle='#4B5563';g.font='22px sans-serif';
+      if(d.qr){const r=await goi('qrAnh',{tien:q.tien,nd:d.ma});if(!r.ok||!r.anh)throw 0;const im=await taiAnh(r.anh);g.drawImage(im,W/2-120,y+110,240,240);g.fillStyle='#4B5563';g.font='22px sans-serif';
         g.fillText(d.qr.nganHang+' · '+d.qr.soTk+' · '+d.qr.chuTk,W/2,y+378);g.fillText('Nội dung chuyển khoản: '+d.ma,W/2,y+408);y+=440}else y+=140}
     g.fillStyle='#9CA3AF';g.font='22px sans-serif';g.fillText('Giá chưa bao gồm VAT và phí vận chuyển.',W/2,H-24);
     const blob=await new Promise(r=>c.toBlob(r,'image/png'));if(!blob)throw 0;
@@ -507,7 +507,7 @@ function theoHash(){
 }
 function batDauQl(){const t=docPhien();if(t){QL.tk=t;taiDon()}else veDangNhap()}
 async function veDangNhap(loi){
-  $('#qlEmail').textContent='';$('#qlTab').innerHTML='';
+  $('#qlEmail').textContent='';$('#qlXuat').hidden=true;$('#qlTab').innerHTML='';
   $('#qlThan').innerHTML=`<div class="the ql-dn"><h2>Đăng nhập quản lý</h2>
    <p class="phu cau">Chỉ tài khoản Google của chủ cửa hàng được vào trang này.</p>
    <div id="gisNut" class="ql-gis"><span class="phu"><span class="ql-quay"></span>Đang tải nút đăng nhập…</span></div>
@@ -547,7 +547,7 @@ function chip(d){const con=d.tong-d.daThu;
   if(d.trangThai==='Mới')return['Mới','c-moi'];if(d.trangThai==='Hủy')return['Đã hủy','c-xam'];
   if(con<=0)return['Đã thu đủ','c-ok'];if(!d.daThu)return['Chưa cọc','c-no'];if(d.daThu<d.coc)return['Cọc còn thiếu','c-no'];return['Còn nợ '+vnd(con),'c-no']}
 function veQl(){
-  $('#qlEmail').textContent=QL.email;
+  $('#qlEmail').textContent=QL.email;$('#qlXuat').hidden=false;
   const moi=QL.ds.filter(d=>d.trangThai==='Mới').length,canDat=QL.ds.filter(d=>d.trangThai==='Đã xác nhận').length;
   const tabs=[['don','Đơn hàng',moi],['dat','Cần đặt',canDat]];if(QL.vaiTro==='chu')tabs.push(['tien','Tiền',0]);
   $('#qlTab').innerHTML=`<div class="ql-tab" style="grid-template-columns:repeat(${tabs.length},1fr)" role="group" aria-label="Mục quản lý">${tabs.map(([k,t,n])=>`<button type="button" data-qltab="${k}" aria-pressed="${QL.tab===k}">${t}${n?`<span class="ql-so">${n}</span>`:''}</button>`).join('')}</div>`;
