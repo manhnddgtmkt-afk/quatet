@@ -212,7 +212,7 @@ document.addEventListener('click',async e=>{
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#hopAnh').hidden)dongAnh()});
 $('#tim').addEventListener('input',veDs);
 $('#xep').addEventListener('change',veDs);
-fetch('data.json?v=1.1').then(r=>r.json()).then(d=>{DS=d;veTab();veDs()})
+fetch('data.json?v=1.2').then(r=>r.json()).then(d=>{DS=d;veTab();veDs()})
   .catch(()=>{$('#ds').innerHTML='<p class="qt-trong phu cau">Chưa tải được danh sách mẫu. Hãy kiểm tra mạng rồi tải lại trang.</p>'});
 </script>
 </body>
