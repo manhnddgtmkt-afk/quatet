@@ -121,7 +121,7 @@ padding:16px 16px calc(16px + env(safe-area-inset-bottom))}
     </div>
   </div>
   <main class="qt-ds" id="ds"></main>
-  <footer class="qt-cuoi phu mo">Giá sỉ tính cho 1 set. Giá bán lẻ là giá gợi ý. Phiên bản 1.3, cập nhật ngày 07/11/2026.</footer>
+  <footer class="qt-cuoi phu mo">Giá sỉ tính cho 1 set. Giá bán lẻ là giá gợi ý. Phiên bản 1.4, cập nhật ngày 07/11/2026.</footer>
 </div>
 
 <div class="hop" id="hopAnh" hidden role="dialog" aria-modal="true" aria-labelledby="hopTen">
@@ -212,8 +212,40 @@ document.addEventListener('click',async e=>{
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#hopAnh').hidden)dongAnh()});
 $('#tim').addEventListener('input',veDs);
 $('#xep').addEventListener('change',veDs);
-fetch('data.json?v=1.3').then(r=>r.json()).then(d=>{DS=d;veTab();veDs()})
-  .catch(()=>{$('#ds').innerHTML='<p class="qt-trong phu cau">Chưa tải được danh sách mẫu. Hãy kiểm tra mạng rồi tải lại trang.</p>'});
+// Bảng giá khách (Google Sheet công bố dạng CSV) – chỉ có mã, tên, giá sỉ, lẻ gợi ý, thành phần, link ảnh
+const SHEET='https://docs.google.com/spreadsheets/d/e/2PACX-1vRUwNhaEFCGNngv7yZ72uizvPNQ1OP85oMW5nAXZbhc4hi2S4sOs1JiKvbPRtnHvLxkceVHWYcNUE7z/pub?output=csv';
+function docCsv(t){const R=[];let r=[],c='',q=false;
+  for(let i=0;i<t.length;i++){const ch=t[i];
+    if(q){if(ch==='"'){if(t[i+1]==='"'){c+='"';i++}else q=false}else c+=ch}
+    else if(ch==='"')q=true;else if(ch===','){r.push(c);c=''}
+    else if(ch==='\n'||ch==='\r'){if(ch==='\r'&&t[i+1]==='\n')i++;r.push(c);R.push(r);r=[];c=''}
+    else c+=ch}
+  if(c||r.length){r.push(c);R.push(r)}return R}
+const so=s=>+String(s||'').replace(/[^0-9]/g,'');
+function ghep(goc,csv){
+  const H=csv[0].map(x=>x.trim()),ix=k=>H.indexOf(k);
+  const cu=new Map(goc.map(d=>[d.code,d])),moi=[];
+  for(const r of csv.slice(1)){
+    const ma=(r[ix('ma')]||'').trim().replace(/\((\d+)\)$/,'(mẫu $1)');
+    const price=so(r[ix('gia_si')]),retail=so(r[ix('le_goi_y')]);
+    const items=(r[ix('thanh_phan')]||'').split('\n').map(x=>x.trim()).filter(Boolean);
+    if(!ma||!price||retail<=price||!items.length)continue; // dòng lỗi thì ẩn
+    const d=cu.get(ma),goc_=(r[ix('anh_goc')]||'').trim(),pc=(r[ix('phoi_canh')]||'').trim();
+    let imgs=d?d.imgs:[];
+    if(!imgs.some(m=>m.kind==='pc')&&pc)imgs=[{src:pc.replace(/=w\d+$/,'=w1400'),w:1400,h:933,kind:'pc'},...imgs];
+    if(!imgs.length&&goc_)imgs=[{src:goc_.replace(/=w\d+$/,'=w1200'),w:900,h:1200,kind:'goc'}];
+    if(!imgs.length)continue;
+    moi.push({code:ma,name:(r[ix('ten')]||'').trim()||(d&&d.name)||ma,price,retail,items,imgs});
+  }
+  return moi}
+let choGhep=null;
+function apDung(ds){if(!$('#hopAnh').hidden){choGhep=ds;return}DS=ds;veTab();veDs()}
+const _dong=dongAnh;dongAnh=function(){_dong();if(choGhep){const d=choGhep;choGhep=null;apDung(d)}};
+fetch('data.json?v=1.4').then(r=>r.json()).then(goc=>{
+  DS=goc;veTab();veDs();
+  return fetch(SHEET+'&t='+Math.floor(Date.now()/60000)).then(r=>{if(!r.ok)throw 0;return r.text()})
+    .then(t=>{const ds=ghep(goc,docCsv(t));if(ds.length>=Math.min(5,goc.length))apDung(ds)}).catch(()=>{});
+}).catch(()=>{$('#ds').innerHTML='<p class="qt-trong phu cau">Chưa tải được danh sách mẫu. Hãy kiểm tra mạng rồi tải lại trang.</p>'});
 </script>
 </body>
 </html>
