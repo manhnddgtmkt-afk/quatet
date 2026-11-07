@@ -461,7 +461,7 @@ async function luuAnhPhieu(){
     g.textAlign='center';
     if(q){g.fillStyle='#FDF3F0';g.fillRect(pad,y,W-2*pad,d.qr?420:120);g.fillStyle='#4B5563';g.font='24px sans-serif';g.fillText(d.qr?q.nhan:q.nhan.replace('Quét mã để','Số tiền'),W/2,y+40);
       g.fillStyle='#8B1A1A';g.font='bold 40px sans-serif';g.fillText(vnd(q.tien),W/2,y+90);
-      if(d.qr){const r=await goi('qrAnh',{ma:d.ma,sdt:d.sdt});if(!r.ok||!r.anh)throw 0;const im=await taiAnh(r.anh);g.drawImage(im,W/2-120,y+110,240,240);g.fillStyle='#4B5563';g.font='22px sans-serif';
+      if(d.qr){const r=await goi('qrAnh',{ma:d.ma,sdt:d.sdt});if(!r.ok||!r.anh)throw 0;const im=await taiAnh(/^data:image\/png;base64,(PHN2|PD94)/.test(r.anh)?r.anh.replace('image/png','image/svg+xml'):r.anh);g.drawImage(im,W/2-120,y+110,240,240);g.fillStyle='#4B5563';g.font='22px sans-serif';
         g.fillText(d.qr.nganHang+' · '+d.qr.soTk+' · '+d.qr.chuTk,W/2,y+378);g.fillText('Nội dung chuyển khoản: '+d.ma,W/2,y+408);y+=440}else y+=140}
     g.fillStyle='#9CA3AF';g.font='22px sans-serif';g.fillText('Giá chưa bao gồm VAT và phí vận chuyển.',W/2,H-24);
     const blob=await new Promise(r=>c.toBlob(r,'image/png'));if(!blob)throw 0;
