@@ -121,7 +121,7 @@ padding:16px 16px calc(16px + env(safe-area-inset-bottom))}
     </div>
   </div>
   <main class="qt-ds" id="ds"></main>
-  <footer class="qt-cuoi phu mo">Giá sỉ tính cho 1 set. Giá bán lẻ là giá gợi ý. Phiên bản 1.4, cập nhật ngày 07/11/2026.</footer>
+  <footer class="qt-cuoi phu mo">Giá sỉ tính cho 1 set. Giá bán lẻ là giá gợi ý. Phiên bản 1.5, cập nhật ngày 07/11/2026.</footer>
 </div>
 
 <div class="hop" id="hopAnh" hidden role="dialog" aria-modal="true" aria-labelledby="hopTen">
@@ -241,7 +241,7 @@ function ghep(goc,csv){
 let choGhep=null;
 function apDung(ds){if(!$('#hopAnh').hidden){choGhep=ds;return}DS=ds;veTab();veDs()}
 const _dong=dongAnh;dongAnh=function(){_dong();if(choGhep){const d=choGhep;choGhep=null;apDung(d)}};
-fetch('data.json?v=1.4').then(r=>r.json()).then(goc=>{
+fetch('data.json?v=1.5').then(r=>r.json()).then(goc=>{
   DS=goc;veTab();veDs();
   return fetch(SHEET+'&t='+Math.floor(Date.now()/60000)).then(r=>{if(!r.ok)throw 0;return r.text()})
     .then(t=>{const ds=ghep(goc,docCsv(t));if(ds.length>=Math.min(5,goc.length))apDung(ds)}).catch(()=>{});
