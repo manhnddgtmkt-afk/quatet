@@ -147,6 +147,39 @@ img{max-width:100%;display:block}
   .xuong-khung{position:relative}
   .dong-ghim{position:relative;height:auto}
 }
+
+/* ===== HỆ CHỮ THỐNG NHẤT: một lề trái, một cỡ tiêu đề, một độ rộng đoạn ===== */
+:root{--le:max(20px,calc((100vw - 1120px)/2 + 20px));--h2:clamp(30px,3.3vw,46px);--doan:17px}
+h1,h2,h3{text-wrap:balance}
+p,figcaption{text-wrap:pretty}
+.chu .ba{display:flex;justify-content:center;gap:0 12px;flex-wrap:wrap}
+.ket{transform:none!important}
+.ba-dieu,.dong-dau,.hang-di .trong{max-width:1120px;margin-left:auto;margin-right:auto}
+.ba-dieu{grid-template-columns:minmax(0,1fr) minmax(0,1.15fr)}
+.ba-dieu h2,.xuong-chu h2,.dong-dau h2,.hang-di h2,.chot h2{font:700 var(--h2)/1.14 Lora,Georgia,serif;letter-spacing:-.005em;max-width:20ch;margin:0 0 14px}
+.ba-dieu .dan,.xuong-chu p,.dong-dau p,.hang-di .dan,.chot p,.ly-do p{font-size:var(--doan);line-height:1.65;max-width:52ch}
+.ba-dieu .dan{margin:0}
+.ly-do h3{font:700 21px/1.3 Lora,Georgia,serif;margin:0 0 6px}
+.xuong-chu{left:var(--le);right:20px;max-width:600px;transform:none!important}
+.xuong-chu h2{color:#FFE3A8}
+.dong-dau{display:block;width:100%;box-sizing:border-box;padding-left:20px;padding-right:20px}
+.dong-dau p{margin:0}
+@media (min-width:900px){.dai{padding:0 var(--le)}}
+.hang-di .dan{margin:0 0 28px}
+.hang-di .trong{max-width:1080px}
+.chot{text-align:left;padding-left:var(--le);padding-right:20px}
+.chot h2,.chot p{margin-left:0;margin-right:0}
+.chot p{margin-bottom:28px}
+.nhom-nut{justify-content:flex-start}
+.lien-he{margin:48px 0 0;max-width:1080px}
+.ghi-thu{text-align:left}
+@media (max-width:760px){
+  :root{--h2:clamp(28px,7.4vw,34px);--doan:16px}
+  .chu .ba{flex-direction:column;gap:2px}
+  .chu .ba .cham{display:none}
+  .ba-dieu{grid-template-columns:1fr;gap:28px}
+  .ly-do h3{font-size:19px}
+}
 </style>
 <script type="importmap">{"imports":{"three":"./vendor/three.module.min.js"}}</script>
 </head>
@@ -157,7 +190,7 @@ img{max-width:100%;display:block}
     <div class="chu" id="lChu">
       <h1>Quà Tết Tâm An</h1>
       <p class="phu">Khám phá hàng chục mẫu quà Tết sang trọng cho doanh nghiệp của bạn</p>
-      <p class="ba"><span>Thiết kế set quà theo yêu cầu</span><span aria-hidden="true">·</span><span>Kho sỉ tận gốc</span><span aria-hidden="true">·</span><span>Bánh kẹo cao cấp</span></p>
+      <p class="ba"><span>Thiết kế set quà theo yêu cầu</span><span class="cham" aria-hidden="true">·</span><span>Kho sỉ tận gốc</span><span class="cham" aria-hidden="true">·</span><span>Bánh kẹo cao cấp</span></p>
       <a class="nut" href="./" data-xem-mau>Xem mẫu</a>
     </div>
     <span class="dang-tai" id="dangTai">Đang mở hộp quà…</span>
@@ -289,7 +322,7 @@ function veDuoi(){
   if (giam) return;
   const px=tienDo(xuong);
   xuongAnh.style.transform='scale('+(1.28-.28*em(px))+')';
-  xuongChu.style.transform='translateY('+(30*(1-em(doan(px,0,.6))))+'px)';
+  
   xuongChu.style.opacity=em(doan(px,.05,.5)).toFixed(3);
   if (innerWidth>=900){
     const pd=tienDo(dong), du=dai.scrollWidth-innerWidth+40;
@@ -301,11 +334,11 @@ function veDuoi(){
 let ve3d=null, pHien=0, pDich=0, chay=false;
 function veChu(p){
   const dt=laDt();
-  chu.style.transform='translateY('+(-(dt?40:70)*em(doan(p,.3,.62)))+'px)';
+  
   chu.style.opacity=giam?'0':(1-em(doan(p,.26,.42))).toFixed(3);
   chu.style.visibility=(!giam && p>.43)?'hidden':'visible';
   const k=giam?1:em(doan(p,.8,.97));
-  ket.style.opacity=k.toFixed(3); ket.style.transform='translateY('+(14*(1-k))+'px)'; ket.classList.toggle('hien',k>.5);
+  ket.style.opacity=k.toFixed(3);  ket.classList.toggle('hien',k>.5);
   m1.style.transform='translate('+(-60*p)+'px,'+(120*p)+'px)'; m2.style.transform='translate('+(50*p)+'px,'+(-80*p)+'px)';
 }
 function vong(){
