@@ -8,14 +8,16 @@
 <meta property="og:title" content="Quà Tết Tâm An – Set quà Tết 2027">
 <meta property="og:description" content="Set quà Tết 2027 giá sỉ. Xem ảnh, tải ảnh, đặt hàng qua Zalo.">
 <meta property="og:image" content="img/mq1-pc1.jpg">
-<meta name="theme-color" content="#F4F5F7">
+<meta name="theme-color" content="#8B1A1A">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&display=swap" rel="stylesheet">
 <style>
 /* Khung CSS nền (quy tắc giao diện app – mục 11) */
-:root{--nen:#F4F5F7;--the:#FFFFFF;--vien:#E5E7EB;--chu1:#111827;--chu2:#4B5563;--chu3:#9CA3AF;
---bam:#2563EB;--tot:#16A34A;--xau:#DC2626;--canh:#D97706;--nhapnen:#EEF4FF;
+:root{--nen:#F7EFEC;--the:#FFFFFF;--vien:#E5E7EB;--chu1:#111827;--chu2:#4B5563;--chu3:#9CA3AF;
+--bam:#8B1A1A;--tet:#8B1A1A;--vang:#F3D9A4;--dong:#C9A15A;--zalo:#0068FF;--manh:#FDF3F0;--tot:#16A34A;--xau:#DC2626;--canh:#D97706;--nhapnen:#EEF4FF;
 --c1:28px;--c2:16px;--c3:13px}
-@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--nen:#0F1115;--the:#1A1D23;--vien:#2A2F38;
---chu1:#F3F4F6;--chu2:#C0C5CE;--chu3:#7D8590;--bam:#60A5FA;--nhapnen:#1B2638}}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--nen:#141010;--the:#1A1D23;--vien:#2A2F38;
+--chu1:#F3F4F6;--chu2:#C0C5CE;--chu3:#7D8590;--bam:#F08A80;--tet:#5C1414;--vang:#EBCB8B;--dong:#B8924A;--zalo:#3B8BFF;--manh:#2A1A1A;--nhapnen:#2A1A1A}}
 html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 *,*::before,*::after{box-sizing:border-box}
 body{margin:0;background:var(--nen);color:var(--chu1);overflow-x:hidden;
@@ -46,10 +48,12 @@ padding:16px 16px calc(16px + env(safe-area-inset-bottom))}
 
 /* Riêng app Quà Tết – tiền tố qt- */
 .qt-wrap{max-width:720px;margin:0 auto}
-.qt-dau{padding:20px 16px 8px}
-.qt-dau h1{margin:0;font-size:var(--c1);font-weight:700;line-height:1.15}
-.qt-dau p{margin:4px 0 0}
-.qt-tim{padding:8px 16px 0}
+.qt-dau{position:relative;overflow:hidden;background:var(--tet);background-image:radial-gradient(circle at 105% -10%,rgba(243,217,164,.22) 0 38%,transparent 38.5%),radial-gradient(circle at 95% 0%,transparent 0 46%,rgba(243,217,164,.35) 46.3% 46.8%,transparent 47%);padding:22px 16px 20px;margin-bottom:4px}
+.qt-nam{margin:0 0 4px;font-size:var(--c3);color:var(--vang);letter-spacing:.3px}
+.qt-dau h1{margin:0;font:700 var(--c1)/1.15 Lora,Georgia,serif;color:#fff}
+.qt-dau p.phu{margin:6px 0 0;color:rgba(255,255,255,.85)}
+.qt-serif{font-family:Lora,Georgia,serif}
+.qt-tim{padding:12px 16px 0}
 .qt-tim input{width:100%;height:46px;border:1px solid var(--vien);border-radius:10px;padding:0 14px;background:var(--the);color:var(--chu1)}
 .qt-tim input::placeholder{color:var(--chu3)}
 .qt-loc{position:sticky;top:0;z-index:10;background:var(--nen);padding:10px 16px 8px}
@@ -66,23 +70,25 @@ padding:16px 16px calc(16px + env(safe-area-inset-bottom))}
 @supports not (aspect-ratio:1){.qt-anh{padding-top:66.7%}}
 .qt-anh .qt-dem{position:absolute;right:10px;bottom:10px;background:rgba(17,24,39,.75);color:#fff;font-size:var(--c3);padding:2px 10px;border-radius:999px}
 .qt-than{padding:14px 16px 16px}
-.qt-ma{flex:none;font-size:var(--c3);font-weight:700;color:var(--chu2);border:1px solid var(--vien);border-radius:6px;padding:1px 8px}
-.qt-than h2{margin:0;font-size:var(--c2);font-weight:700}
+.qt-ma{flex:none;font-size:var(--c3);font-weight:700;color:#fff;background:var(--tet);border-radius:6px;padding:2px 8px}
+.qt-than h2{margin:0;font:700 var(--c2)/1.3 Lora,Georgia,serif}
 .qt-gia{margin-top:10px}
+.qt-gia .so-chinh{color:var(--bam)}
 .qt-gia .phu{margin-top:2px}
 .qt-loi{color:var(--tot);font-weight:700}
 .qt-ngan{border:0;border-top:1px solid var(--vien);margin:12px 0}
 .qt-tp{margin:0 0 6px;font-size:var(--c2);font-weight:700}
 .qt-mon{list-style:none;margin:0;padding:0}
 .qt-mon li{position:relative;padding-left:16px;margin:2px 0}
-.qt-mon li::before{content:"";position:absolute;left:2px;top:.62em;width:6px;height:6px;border-radius:50%;background:var(--chu3)}
+.qt-mon li::before{content:"";position:absolute;left:2px;top:.62em;width:6px;height:6px;border-radius:50%;background:var(--dong)}
 .qt-mon li.qt-chinh{font-weight:700}
-.qt-mon li.qt-chinh::before{background:var(--chu1)}
+.qt-mon li.qt-chinh::before{background:var(--bam)}
 .qt-goi{margin-top:8px}
 .qt-nut{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
 .qt-nut a,.qt-nut button{display:flex;align-items:center;justify-content:center;min-height:44px;border-radius:10px;font-weight:600;font-size:var(--c2);text-decoration:none;white-space:nowrap}
 .qt-phu{background:var(--the);color:var(--bam);border:1px solid var(--bam)}
 .qt-chinhnut{background:var(--bam);color:#fff;border:1px solid var(--bam)}
+.qt-nut .qt-chinhnut{background:var(--zalo);border-color:var(--zalo)}
 .qt-trong{text-align:center;padding:32px 16px}
 .qt-cuoi{text-align:center;padding:8px 16px 24px}
 /* Hộp ảnh */
@@ -103,8 +109,9 @@ padding:16px 16px calc(16px + env(safe-area-inset-bottom))}
 <body>
 <div class="qt-wrap">
   <header class="qt-dau">
+    <p class="qt-nam">Tết Đinh Mùi 2027</p>
     <h1>Quà Tết Tâm An</h1>
-    <p class="phu">Set quà Tết 2027, giá sỉ. Chọn mẫu, xem và tải ảnh, đặt hàng qua Zalo.</p>
+    <p class="phu">Set quà Tết giá sỉ. Chọn mẫu, xem và tải ảnh, đặt hàng qua Zalo.</p>
   </header>
   <div class="qt-tim"><input id="tim" type="search" placeholder="Tìm theo mã hoặc tên set" aria-label="Tìm theo mã hoặc tên set" autocomplete="off"></div>
   <div class="qt-loc">
@@ -114,7 +121,7 @@ padding:16px 16px calc(16px + env(safe-area-inset-bottom))}
     </div>
   </div>
   <main class="qt-ds" id="ds"></main>
-  <footer class="qt-cuoi phu mo">Giá sỉ tính cho 1 set. Giá bán lẻ là giá gợi ý. Phiên bản 1.0, cập nhật ngày 07/11/2026.</footer>
+  <footer class="qt-cuoi phu mo">Giá sỉ tính cho 1 set. Giá bán lẻ là giá gợi ý. Phiên bản 1.1, cập nhật ngày 07/11/2026.</footer>
 </div>
 
 <div class="hop" id="hopAnh" hidden role="dialog" aria-modal="true" aria-labelledby="hopTen">
@@ -205,7 +212,7 @@ document.addEventListener('click',async e=>{
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#hopAnh').hidden)dongAnh()});
 $('#tim').addEventListener('input',veDs);
 $('#xep').addEventListener('change',veDs);
-fetch('data.json?v=1.0').then(r=>r.json()).then(d=>{DS=d;veTab();veDs()})
+fetch('data.json?v=1.1').then(r=>r.json()).then(d=>{DS=d;veTab();veDs()})
   .catch(()=>{$('#ds').innerHTML='<p class="qt-trong phu cau">Chưa tải được danh sách mẫu. Hãy kiểm tra mạng rồi tải lại trang.</p>'});
 </script>
 </body>
