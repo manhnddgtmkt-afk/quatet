@@ -136,6 +136,8 @@ textarea.gh-o{height:auto;min-height:64px;padding:10px 12px;resize:vertical;font
 .gh-an{position:absolute!important;left:-9999px;width:1px;height:1px;opacity:0}
 .gh-tong{border:1px solid var(--vien);border-radius:12px;padding:12px;margin-top:14px}
 .gh-tong .so-chinh{font-size:24px}
+.gh-ct{color:var(--chu2);font-size:15px;margin-bottom:4px}
+.gh-tc{border-top:1px solid var(--vien);padding-top:8px;margin-top:6px}
 .gh-tong p{margin:6px 0 0}
 .gh-loi{color:var(--xau);font-size:var(--c3);margin:10px 0 0}
 .gh-day{position:sticky;bottom:calc(-16px - env(safe-area-inset-bottom));background:var(--the);margin:14px -16px calc(-16px - env(safe-area-inset-bottom));padding:12px 16px calc(12px + env(safe-area-inset-bottom));border-top:1px solid var(--vien)}
@@ -149,6 +151,7 @@ textarea.gh-o{height:auto;min-height:64px;padding:10px 12px;resize:vertical;font
 .ph-ds .dong{margin:3px 0}
 .ph-ds .dong .tien{margin-left:auto}
 .ph-tongd{font-weight:700;margin-top:8px!important}
+.ph-vat{color:var(--chu2)}
 .ph-bao{background:var(--manh);border-radius:12px;padding:12px;margin-top:12px;text-align:left}
 .ph-ghi{margin:10px 0 0}
 .ph-gc{text-align:left;margin:10px 0 0}
@@ -392,6 +395,19 @@ body{padding-top:0}
 .qt-le{display:flex;flex-wrap:wrap;gap:0 10px}
 @media (min-width:700px){.qt-ds>.the{margin:0}}
 @media (min-width:1100px){.qt-wrap{padding:0 24px}.qt-dau{border-radius:0}}
+
+/* Xưởng: ảnh vừa khung, không phóng tràn màn (ảnh điện thoại phóng to bị mờ) */
+.xuong{height:auto;background:var(--kem);padding:clamp(64px,8vw,112px) 0}
+.xuong-khung{position:relative;top:auto;height:auto;overflow:visible;max-width:1600px;margin:0 auto;padding:0 24px;
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(32px,5vw,80px);align-items:center}
+.xuong-anh{position:relative;inset:auto;order:2;transform:none!important;border-radius:12px;overflow:hidden;aspect-ratio:4/5;max-height:78vh;width:100%;max-width:620px;justify-self:end;
+  background:#E8D9BC;box-shadow:0 24px 48px -28px rgba(60,20,4,.6)}
+.xuong-anh img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.xuong-che{display:none}
+.xuong-chu{position:static;order:1;max-width:none;color:var(--muc);opacity:1!important;transform:none!important}
+.xuong-chu h2{color:var(--do)!important}
+.xuong-chu p{color:var(--muc-2)}
+@media (max-width:760px){.xuong-khung{grid-template-columns:1fr;padding:0 20px}.xuong-anh{justify-self:stretch;max-width:none;max-height:none}}
 [hidden]{display:none!important}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
@@ -435,7 +451,7 @@ body{padding-top:0}
 <span id="danh-muc"></span>
   <header class="qt-dau">
     <h2 class="h1-dm" id="tieuDeDm">Bộ sưu tập quà Tết 2027</h2>
-    <p class="phu cau">Chọn mẫu, cho vào giỏ và để lại số điện thoại. Đặt tối thiểu <span data-toithieu>10</span> set. Giá chưa bao gồm VAT và phí vận chuyển.</p>
+    <p class="phu cau">Chọn mẫu, cho vào giỏ và để lại số điện thoại. Đặt tối thiểu <span data-toithieu>10</span> set. Giá sỉ ghi trên mẫu chưa gồm VAT 8%, giỏ hàng tự cộng VAT. Chưa gồm phí vận chuyển.</p>
   </header>
   <div class="qt-khung">
   <div class="qt-cot">
@@ -450,7 +466,7 @@ body{padding-top:0}
   </div>
   <p class="phu cau qt-thamkhao">Mẫu tham khảo. Hàng thay đổi theo kho, Tâm An sẽ xác nhận trước khi chốt.</p>
   <main class="qt-ds" id="ds"></main>
-  <footer class="qt-cuoi phu mo cau">Giá sỉ tính cho 1 set. Giá bán lẻ là giá tham khảo trên thị trường.<br><span data-pb>Phiên bản 3.0</span>, cập nhật ngày 08/11/2026.<br>
+  <footer class="qt-cuoi phu mo cau">Giá sỉ tính cho 1 set, chưa gồm VAT 8%. Giá bán lẻ là giá tham khảo trên thị trường.<br><span data-pb>Phiên bản 3.1</span>, cập nhật ngày 08/11/2026.<br>
     <button type="button" class="qt-loi-link" data-comoi>Có gì mới</button><button type="button" class="qt-loi-link" data-dondagui>Đơn đã gửi</button></footer>
   </div>
   <aside class="gh-ben" id="ghBen" aria-label="Giỏ hàng"></aside>
@@ -461,7 +477,7 @@ body{padding-top:0}
 <section class="xuong" id="xuong" aria-label="Xưởng đóng quà">
     <div class="xuong-khung">
       <div class="xuong-anh" id="xuongAnh">
-        <img src="https://lh3.googleusercontent.com/d/1IJs9NUI53CQEvExa8OdnYvAqSV6Crnb_=w1600" alt="Hàng trăm hộp quà Tết mở nắp xếp kín sàn xưởng" loading="lazy" referrerpolicy="no-referrer" width="1600" height="2133">
+        <img src="https://lh3.googleusercontent.com/d/1IJs9NUI53CQEvExa8OdnYvAqSV6Crnb_=w1400" alt="Hàng trăm hộp quà Tết mở nắp xếp kín sàn xưởng" loading="lazy" referrerpolicy="no-referrer" width="1600" height="2133">
       </div>
       <div class="xuong-che"></div>
       <div class="xuong-chu" id="xuongChu">
@@ -517,8 +533,9 @@ body{padding-top:0}
 <div class="hop" id="hopAnh" hidden role="dialog" aria-modal="true" aria-labelledby="hopTen"><div class="khung" id="hopKhung"></div></div>
 <div class="hop" id="hopGio" hidden role="dialog" aria-modal="true" aria-label="Giỏ hàng"><div class="khung" id="ghKhung"></div></div>
 <div class="hop" id="hopMoi" hidden role="dialog" aria-modal="true" aria-label="Có gì mới"><div class="khung">
-  <div class="dong qt-hd"><span class="ten" style="font-weight:700">Có gì mới ở phiên bản 3.0</span><button type="button" class="qt-dong-x" data-donghop="hopMoi" aria-label="Đóng">×</button></div>
+  <div class="dong qt-hd"><span class="ten" style="font-weight:700">Có gì mới ở phiên bản 3.1</span><button type="button" class="qt-dong-x" data-donghop="hopMoi" aria-label="Đóng">×</button></div>
   <ul class="qt-moids">
+    <li><b>🧾 Giỏ hàng tính sẵn VAT</b><span class="cau">Giỏ hàng và phiếu đơn ghi rõ tiền hàng, thuế VAT 8% và tổng cộng đã gồm VAT, không phải tự cộng.</span><br><span class="phu cau">Thêm mẫu vào giỏ → xem dòng <span class="nut-xam">Tổng cộng</span> trong giỏ hàng</span></li>
     <li><b>🎁 Mở hộp quà ngay đầu trang</b><span class="cau">Cuộn xuống là hộp quà Tết mở nắp, năm mẫu nổi bật bay ra xếp thành hình quạt. Chạm vào mẫu nào là mở ngay ảnh của mẫu đó.</span><br><span class="phu cau">Cuộn xuống đầu trang → chạm vào một mẫu trong hình quạt → xem và tải ảnh</span></li>
     <li><b>🏭 Xem tận mắt xưởng Tâm An</b><span class="cau">Bên dưới danh mục có ảnh thực tế xưởng đóng quà và hàng đi giao, kèm địa chỉ và hotline.</span><br><span class="phu cau">Cuối trang → <span class="nut-xam">Gọi 0986 293 719</span> để được tư vấn</span></li>
     <li><b>💰 Thấy ngay khoản rẻ hơn</b><span class="cau">Mỗi mẫu ghi giá bán lẻ trên thị trường và số tiền rẻ hơn khi lấy giá sỉ của Tâm An.</span><br><span class="phu cau">Xem dòng Giá bán lẻ · Rẻ hơn dưới giá sỉ của từng mẫu</span></li>
@@ -526,7 +543,8 @@ body{padding-top:0}
   </ul></div></div>
 <div class="qt-bao cau" id="bao" role="status"></div>
 <script>
-const PB='3.0';
+const PB='3.1';
+const VAT=0.08,tienVat=n=>Math.round(n*VAT),coVat=n=>n+tienVat(n);
 const ZALO='https://zalo.me/0986293719';
 const API='https://script.google.com/macros/s/AKfycbzPVjymGzh4kdjlRtCQ5vw89XcuJFEB3rtBv31D6tcNwUmygc4qmBKzh1jJaD7PsFQSCw/exec';
 let TOI_THIEU=10,_ch=0;
@@ -641,7 +659,7 @@ function luuGio(){ghiLuu('qt_gio',GIO);veThanh()}
 function veThanh(){
   const e=$('#ghThanh'),t=tongGio(),an=!t.sl||laMayTinh();
   e.hidden=an;document.body.classList.toggle('gh-co',!an);if(an)return;
-  e.innerHTML=`<div class="dong"><div style="min-width:0"><div class="gh-so ten">Giỏ hàng: ${t.sl} set</div><div class="phu">Tạm tính <span class="tien">${vnd(t.tien)}</span></div></div><button type="button" class="qt-chinhnut gh-mo" data-mogio>Xem giỏ</button></div>`;
+  e.innerHTML=`<div class="dong"><div style="min-width:0"><div class="gh-so ten">Giỏ hàng: ${t.sl} set</div><div class="phu">Tổng gồm VAT <span class="tien">${vnd(coVat(t.tien))}</span></div></div><button type="button" class="qt-chinhnut gh-mo" data-mogio>Xem giỏ</button></div>`;
 }
 function capNutThem(ma){const b=document.querySelector(`[data-them="${CSS.escape(ma)}"]`);if(!b)return;const sl=GIO[ma]||0;b.className=sl?'qt-phu':'qt-chinhnut';b.textContent=sl?'Trong giỏ: '+sl+' set':'Thêm vào giỏ'}
 function themGio(ma){taiCauHinh();if(GIO[ma]){moGio();return}GIO[ma]=1;luuGio();capNutThem(ma);
@@ -668,8 +686,10 @@ function veGio(){
   <label class="gh-nhan" for="ghGhi">Ghi chú cho Tâm An (không bắt buộc)</label>
   <textarea id="ghGhi" class="gh-o" rows="2" maxlength="500" placeholder="Ví dụ muốn đổi chai rượu, cần giao trước 20 tháng Chạp">${esc(GHI_CHU)}</textarea>
   <input id="ghWeb" class="gh-an" name="qt_kiem_tra_an" tabindex="-1" autocomplete="off" aria-hidden="true">
-  <div class="gh-tong"><div class="dong"><span>Tạm tính</span><span class="so-chinh tien" id="ghTong" style="margin-left:auto"></span></div>
-  <p class="phu mo cau">Mẫu tham khảo. Hàng thay đổi theo kho, Tâm An sẽ xác nhận trước khi chốt. Giá chưa bao gồm VAT và phí vận chuyển. Mã QR đặt cọc gửi sau khi chốt đơn.</p></div>
+  <div class="gh-tong"><div class="dong gh-ct"><span>Tiền hàng</span><span class="tien" id="ghHang" style="margin-left:auto"></span></div>
+  <div class="dong gh-ct"><span>Thuế VAT 8%</span><span class="tien" id="ghVat" style="margin-left:auto"></span></div>
+  <div class="dong gh-tc"><span>Tổng cộng</span><span class="so-chinh tien" id="ghTong" style="margin-left:auto"></span></div>
+  <p class="phu mo cau">Đã gồm VAT 8%, chưa gồm phí vận chuyển. Mẫu tham khảo, hàng thay đổi theo kho, Tâm An sẽ xác nhận trước khi chốt. Mã QR đặt cọc gửi sau khi chốt đơn.</p></div>
   <p class="gh-loi cau" id="ghLoi" role="alert" hidden></p>
   <div class="gh-day"><button type="button" class="qt-chinhnut" id="ghGui">Gửi đơn đặt hàng</button></div>`;
   capSoGio();
@@ -677,7 +697,7 @@ function veGio(){
 function capSoGio(){
   const t=tongGio();
   document.querySelectorAll('[data-ghma]').forEach(el=>{const x=t.l.find(y=>y.ma===el.dataset.ghma);if(x)el.querySelector('[data-ghtt]').textContent=vnd(x.sl*x.d.price)});
-  if($('#ghTong'))$('#ghTong').textContent=vnd(t.tien);
+  if($('#ghTong')){$('#ghHang').textContent=vnd(t.tien);$('#ghVat').textContent=vnd(tienVat(t.tien));$('#ghTong').textContent=vnd(coVat(t.tien))}
   if($('#ghChuy'))$('#ghChuy').innerHTML=t.sl<TOI_THIEU?`<p class="gh-chuy cau">Đơn đang có ${t.sl} set. Tâm An nhận đơn từ ${TOI_THIEU} set trở lên. Đơn ít hơn vẫn gửi được để Tâm An gọi tư vấn.</p>`:`<p class="phu cau" style="margin:4px 0 0">Đơn có ${t.sl} set, đã đủ mức tối thiểu ${TOI_THIEU} set.</p>`;
   veThanh();
 }
@@ -725,23 +745,25 @@ function vePhieu(d,o){
    <div class="ph-tieu">Quà Tết Tâm An</div>
    <div class="phu">Mã đơn <b>${esc(d.ma)}</b> · <span class="lien">SĐT ${esc(dinhSdt(d.sdt))}</span></div>
    <div class="ph-ds">${d.dong.map(l=>`<div class="dong"><span class="ten">${esc(l.ma)} ${esc(l.ten)} × ${l.sl}</span><span class="tien">${vnd(l.sl*l.gia)}</span></div>`).join('')}
-    <div class="dong ph-tongd"><span>Tạm tính</span><span class="tien">${vnd(tongPhieu(d))}</span></div></div>
+    <div class="dong ph-vat"><span>Tiền hàng</span><span class="tien">${vnd(tongPhieu(d))}</span></div>
+    <div class="dong ph-vat"><span>Thuế VAT 8%</span><span class="tien">${vnd(tienVat(tongPhieu(d)))}</span></div>
+    <div class="dong ph-tongd"><span>Tổng cộng</span><span class="tien">${vnd(coVat(tongPhieu(d)))}</span></div></div>
    ${d.ghiChu?`<p class="phu cau ph-gc">Ghi chú: ${esc(d.ghiChu)}</p>`:''}
    <div class="ph-bao"><p class="cau" style="margin:0">${CAU_PHIEU}</p></div>
-   <p class="phu mo cau ph-ghi">Giá chưa bao gồm VAT và phí vận chuyển.</p></div>
+   <p class="phu mo cau ph-ghi">Đã gồm VAT 8%, chưa gồm phí vận chuyển.</p></div>
   <div class="gh-day"><div class="gh-2nut"><button type="button" class="qt-phu" data-luuphieu>Lưu ảnh phiếu</button>
    <button type="button" class="qt-zalo" data-zaloph>Nhắn Zalo</button></div></div>`;
   if($('#hopGio').hidden)moHop('hopGio');
   $('#ghKhung').scrollTop=0;
 }
-function chuPhieu(d){return `Quà Tết Tâm An – đơn ${d.ma} (SĐT ${dinhSdt(d.sdt)})\n`+d.dong.map(l=>`${l.ma} ${l.ten} × ${l.sl}: ${vnd(l.sl*l.gia)}`).join('\n')+`\nTạm tính: ${vnd(tongPhieu(d))}`+(d.ghiChu?`\nGhi chú: ${d.ghiChu}`:'')+`\nGiá chưa bao gồm VAT và phí vận chuyển.`}
+function chuPhieu(d){return `Quà Tết Tâm An – đơn ${d.ma} (SĐT ${dinhSdt(d.sdt)})\n`+d.dong.map(l=>`${l.ma} ${l.ten} × ${l.sl}: ${vnd(l.sl*l.gia)}`).join('\n')+`\nTiền hàng: ${vnd(tongPhieu(d))}\nThuế VAT 8%: ${vnd(tienVat(tongPhieu(d)))}\nTổng cộng: ${vnd(coVat(tongPhieu(d)))}`+(d.ghiChu?`\nGhi chú: ${d.ghiChu}`:'')+`\nĐã gồm VAT 8%, chưa gồm phí vận chuyển.`}
 function catDong(g,t,m){const tu=String(t).split(' '),out=[];let s='';tu.forEach(w=>{const th=s?s+' '+w:w;if(g.measureText(th).width>m&&s){out.push(s);s=w}else s=th});if(s)out.push(s);return out}
 async function luuAnhPhieu(){
   const d=PHIEU;if(!d)return;
   try{
     const W=720,pad=40,c=document.createElement('canvas'),g0=c.getContext('2d');
     g0.font='24px sans-serif';const cau=catDong(g0,CAU_PHIEU,W-2*pad-40),gc=d.ghiChu?catDong(g0,'Ghi chú: '+d.ghiChu,W-2*pad):[];
-    const H=330+d.dong.length*40+gc.length*32+cau.length*32+60+60;
+    const H=330+d.dong.length*40+80+gc.length*32+cau.length*32+60+60;
     c.width=W;c.height=H;const g=c.getContext('2d');
     g.fillStyle='#FFFFFF';g.fillRect(0,0,W,H);g.fillStyle='#8B1A1A';g.fillRect(0,0,W,120);
     g.fillStyle='#F3D9A4';g.font='24px sans-serif';g.textAlign='center';g.fillText('Phiếu đặt hàng · '+(d.tg||''),W/2,44);
@@ -751,10 +773,11 @@ async function luuAnhPhieu(){
     const cat=(t,m)=>{while(g.measureText(t).width>m&&t.length>4)t=t.slice(0,-2);return t};
     d.dong.forEach(l=>{g.fillStyle='#111827';g.textAlign='left';g.fillText(cat(l.ma+' '+l.ten+' × '+l.sl,430),pad,y);g.textAlign='right';g.fillText(vnd(l.sl*l.gia),W-pad,y);y+=40});
     g.strokeStyle='#E5E7EB';g.beginPath();g.moveTo(pad,y-14);g.lineTo(W-pad,y-14);g.stroke();y+=20;
-    g.font='bold 28px sans-serif';g.textAlign='left';g.fillText('Tạm tính',pad,y);g.textAlign='right';g.fillText(vnd(tongPhieu(d)),W-pad,y);y+=44;
+    g.font='24px sans-serif';g.fillStyle='#4B5563';[['Tiền hàng',tongPhieu(d)],['Thuế VAT 8%',tienVat(tongPhieu(d))]].forEach(([n,v])=>{g.textAlign='left';g.fillText(n,pad,y);g.textAlign='right';g.fillText(vnd(v),W-pad,y);y+=40});
+    g.fillStyle='#111827';g.font='bold 28px sans-serif';g.textAlign='left';g.fillText('Tổng cộng',pad,y);g.textAlign='right';g.fillText(vnd(coVat(tongPhieu(d))),W-pad,y);y+=44;
     g.font='24px sans-serif';g.fillStyle='#4B5563';g.textAlign='left';gc.forEach(t=>{g.fillText(t,pad,y);y+=32});
     g.fillStyle='#FDF3F0';g.fillRect(pad,y,W-2*pad,cau.length*32+28);g.fillStyle='#111827';y+=34;cau.forEach(t=>{g.fillText(t,pad+20,y);y+=32});
-    g.fillStyle='#9CA3AF';g.font='22px sans-serif';g.textAlign='center';g.fillText('Giá chưa bao gồm VAT và phí vận chuyển.',W/2,H-24);
+    g.fillStyle='#9CA3AF';g.font='22px sans-serif';g.textAlign='center';g.fillText('Đã gồm VAT 8%, chưa gồm phí vận chuyển.',W/2,H-24);
     const blob=await new Promise(r=>c.toBlob(r,'image/png'));if(!blob)throw 0;
     const f=new File([blob],'Phieu_'+d.ma+'.png',{type:'image/png'});
     if(navigator.canShare&&navigator.canShare({files:[f]})){try{await navigator.share({files:[f],title:'Phiếu '+d.ma});return}catch(e){if(e&&e.name==='AbortError')return}}
@@ -847,7 +870,7 @@ window.moMau=function(ma){ma=String(ma||'').toUpperCase();const i=DS.findIndex(d
   const el=document.getElementById('mau-'+DS[i].code);if(el)el.scrollIntoView({behavior:'smooth',block:'center'});setTimeout(()=>moAnh(i),450)};
 function moTheoDuongDan(){const m=location.hash.match(/^#(MQ[\w]+)$/i);if(m&&DS.length)moMau(m[1])}
 addEventListener('hashchange',moTheoDuongDan);
-fetch('data.json?v=3.0').then(r=>r.json()).then(goc=>{
+fetch('data.json?v=3.1').then(r=>r.json()).then(goc=>{
   DS=goc;veTab();veDs();veThanh();if(laMayTinh())veGio();moTheoDuongDan();
   return fetch(SHEET+'&t='+Math.floor(Date.now()/60000)).then(r=>{if(!r.ok)throw 0;return r.text()})
     .then(t=>{const ds=ghep(goc,docCsv(t));if(ds.length>=Math.min(5,goc.length))apDung(ds)}).catch(()=>{});
@@ -896,9 +919,7 @@ const xuong=$('xuong'), xuongAnh=$('xuongAnh'), xuongChu=$('xuongChu'), dong=$('
 function veDuoi(){
   if (giam) return;
   const px=tienDo(xuong);
-  xuongAnh.style.transform='scale('+(1.28-.28*em(px))+')';
   
-  xuongChu.style.opacity=em(doan(px,.05,.5)).toFixed(3);
   if (innerWidth>=900){
     const pd=tienDo(dong), du=dai.scrollWidth-innerWidth+40;
     dai.style.transform='translateX('+(-Math.max(0,du)*emio(pd))+'px)';
