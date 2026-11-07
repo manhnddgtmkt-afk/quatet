@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Quà Tết Tâm An – Bản thử màn đầu</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#5E0A0E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,600;0,700;1,600&family=Be+Vietnam+Pro:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --do-dam:#5E0A0E; --do:#9B1218; --do-sang:#C42A2A; --vang:#E9C27A; --vang-dam:#C99A45;
+  --kem:#FBF4E6; --kem-2:#F3E6CC; --muc:#2A1608; --muc-2:#6B4A33;
+  --ease:cubic-bezier(.23,1,.32,1);
+  color-scheme:light;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{margin:0;background:var(--kem);color:var(--muc);font:400 16px/1.6 "Be Vietnam Pro",system-ui,sans-serif;overflow-x:hidden}
+::selection{background:var(--vang);color:var(--do-dam)}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--vang);outline-offset:3px;border-radius:6px}
+
+/* ============ MÀN ĐẦU: hộp quà mở nắp theo cuộn ============ */
+.bia{position:relative;height:260vh;background:var(--do-dam)}
+.bia-khung{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;isolation:isolate}
+
+/* lớp 0: nền tường đỏ có hoạ tiết mây vàng mờ */
+.lop-nen{position:absolute;inset:-8% -4%;z-index:0;will-change:transform;
+  background:
+    radial-gradient(120% 80% at 50% 108%, #8E1418 0%, rgba(142,20,24,0) 60%),
+    radial-gradient(70% 55% at 50% 38%, #7C1015 0%, var(--do-dam) 70%);
+}
+.lop-nen::after{content:"";position:absolute;inset:0;opacity:.11;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='120' viewBox='0 0 160 120'%3E%3Cg fill='none' stroke='%23E9C27A' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M20 70c0-12 14-18 22-10 2-14 22-16 26-2 10-6 22 2 18 14H20z'/%3E%3Cpath d='M96 30c0-9 10-13 16-7 2-10 16-11 19-1 7-4 16 1 13 10H96z'/%3E%3Ccircle cx='130' cy='95' r='3'/%3E%3Ccircle cx='60' cy='20' r='2'/%3E%3C/g%3E%3C/svg%3E");
+  background-size:220px auto}
+/* ánh vàng toả từ trong hộp */
+.anh-sang{position:absolute;left:50%;top:62%;width:120vmin;height:120vmin;z-index:1;pointer-events:none;
+  transform:translate(-50%,-50%) scale(.6);opacity:0;will-change:transform,opacity;
+  background:radial-gradient(closest-side,rgba(255,214,130,.55),rgba(255,190,90,.18) 45%,rgba(255,190,90,0) 70%)}
+
+/* lớp 1: chữ, nằm sau hộp */
+.chu{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;text-align:center;
+  padding:calc(env(safe-area-inset-top) + 9vh) 20px 0;will-change:transform,opacity;color:var(--kem)}
+.chu .nam{font:600 13px/1 "Be Vietnam Pro",sans-serif;letter-spacing:.32em;text-transform:uppercase;color:var(--vang);margin:0 0 18px}
+.chu h1{font:700 clamp(46px,8.2vw,124px)/.98 Lora,Georgia,serif;letter-spacing:-.015em;margin:0;color:var(--vang);
+  text-wrap:balance;text-shadow:0 2px 0 rgba(60,4,6,.35),0 18px 40px rgba(40,2,4,.45)}
+.chu .phu{margin:18px 0 0;font-size:clamp(15px,1.35vw,19px);color:#F6E3C6;max-width:34ch;text-wrap:balance}
+
+/* lớp 2: sân khấu 3D với hộp quà */
+.san-khau{position:absolute;left:50%;top:68%;z-index:3;width:0;height:0;perspective:1500px;perspective-origin:50% 20%}
+.hop{--W:440px;--D:300px;--H:150px;--L:46px;
+  position:absolute;left:0;top:0;transform-style:preserve-3d;will-change:transform}
+.mat{position:absolute;left:0;top:0;backface-visibility:visible}
+.hop .mat{background:linear-gradient(180deg,var(--do-sang),var(--do) 55%,#7E0E13)}
+/* thân hộp */
+.m-truoc{width:var(--W);height:var(--H);transform:translate(-50%,-50%) translateZ(calc(var(--D)/2))}
+.m-sau{width:var(--W);height:var(--H);transform:translate(-50%,-50%) rotateY(180deg) translateZ(calc(var(--D)/2))}
+.m-phai{width:var(--D);height:var(--H);transform:translate(-50%,-50%) rotateY(90deg) translateZ(calc(var(--W)/2));filter:brightness(.78)}
+.m-trai{width:var(--D);height:var(--H);transform:translate(-50%,-50%) rotateY(-90deg) translateZ(calc(var(--W)/2));filter:brightness(.78)}
+.m-day{width:var(--W);height:var(--D);transform:translate(-50%,-50%) rotateX(-90deg) translateZ(calc(var(--H)/2));background:#3A0507!important}
+/* lòng hộp: lót tối hơn, có ánh vàng */
+.long{background:linear-gradient(180deg,#5A080C,#3C0508)!important}
+.l-sau{width:var(--W);height:var(--H);transform:translate(-50%,-50%) translateZ(calc(var(--D)/-2 + 3px))}
+.l-trai{width:var(--D);height:var(--H);transform:translate(-50%,-50%) rotateY(90deg) translateZ(calc(var(--W)/-2 + 3px))}
+.l-phai{width:var(--D);height:var(--H);transform:translate(-50%,-50%) rotateY(-90deg) translateZ(calc(var(--W)/-2 + 3px))}
+.l-day{width:var(--W);height:var(--D);transform:translate(-50%,-50%) rotateX(90deg) translateZ(calc(var(--H)/-2 + 3px));
+  background:radial-gradient(70% 70% at 50% 50%,#8A2A12,#3C0508)!important}
+.l-day .toa{position:absolute;inset:0;background:radial-gradient(60% 60% at 50% 50%,rgba(255,215,140,.9),rgba(255,215,140,0));opacity:var(--toa,0)}
+/* dải ruy băng vàng trên thân */
+.bang-doc,.bang-ngang{position:absolute;background:linear-gradient(90deg,#B07F2F,#F3D594 45%,#C99A45);box-shadow:0 0 0 1px rgba(90,50,10,.25) inset}
+.m-truoc .bang-doc{left:calc(50% - 17px);width:34px;top:0;bottom:0}
+.m-phai .bang-doc,.m-trai .bang-doc{left:calc(50% - 17px);width:34px;top:0;bottom:0}
+.vien{position:absolute;inset:10px;border:1px solid rgba(233,194,122,.55);border-radius:2px}
+.dau{position:absolute;left:24px;bottom:16px;font:600 12px/1 "Be Vietnam Pro",sans-serif;letter-spacing:.24em;text-transform:uppercase;color:var(--vang)}
+
+/* nắp hộp: bản lề ở mép sau */
+.nap{position:absolute;left:0;top:0;transform-style:preserve-3d;will-change:transform;
+  --Wn:calc(var(--W) + 14px);--Dn:calc(var(--D) + 14px)}
+.nap .mat{background:linear-gradient(180deg,#D23434,var(--do-sang) 40%,#9E151B)}
+.n-tren{width:var(--Wn);height:var(--Dn);transform:translate(-50%,-50%) translateY(calc(var(--L)*-1)) rotateX(90deg)}
+.n-truoc{width:var(--Wn);height:var(--L);transform:translate(-50%,-50%) translateY(calc(var(--L)/-2)) translateZ(calc(var(--Dn)/2))}
+.n-sau{width:var(--Wn);height:var(--L);transform:translate(-50%,-50%) translateY(calc(var(--L)/-2)) rotateY(180deg) translateZ(calc(var(--Dn)/2))}
+.n-phai{width:var(--Dn);height:var(--L);transform:translate(-50%,-50%) translateY(calc(var(--L)/-2)) rotateY(90deg) translateZ(calc(var(--Wn)/2));filter:brightness(.8)}
+.n-trai{width:var(--Dn);height:var(--L);transform:translate(-50%,-50%) translateY(calc(var(--L)/-2)) rotateY(-90deg) translateZ(calc(var(--Wn)/2));filter:brightness(.8)}
+.n-tren .bang-doc{left:calc(50% - 17px);width:34px;top:0;bottom:0}
+.n-tren .bang-ngang{top:calc(50% - 17px);height:34px;left:0;right:0;background:linear-gradient(180deg,#B07F2F,#F3D594 45%,#C99A45)}
+.n-truoc .bang-doc{left:calc(50% - 17px);width:34px;top:0;bottom:0}
+.no{position:absolute;left:50%;top:50%;width:150px;height:96px;transform:translate(-50%,-62%);filter:drop-shadow(0 6px 6px rgba(60,10,0,.35))}
+
+/* ảnh set quà bay lên từ lòng hộp */
+.the-anh{position:absolute;left:0;top:0;width:0;height:0;transform-style:preserve-3d;will-change:transform}
+.the-anh .khung{position:absolute;left:0;top:0;width:var(--Wa,330px);aspect-ratio:900/975;transform:translate(-50%,-50%);background:var(--kem);padding:10px;border-radius:6px;
+  box-shadow:0 30px 60px -20px rgba(30,2,4,.7),0 0 0 1px rgba(233,194,122,.6) inset}
+.the-anh img{display:block;width:100%;height:100%;object-fit:cover;border-radius:3px}
+
+/* bóng hộp trên mặt bàn */
+.bong{position:absolute;left:50%;top:calc(68% + 120px);z-index:2;width:640px;height:90px;transform:translate(-50%,-50%);
+  background:radial-gradient(closest-side,rgba(20,0,2,.55),rgba(20,0,2,0));will-change:transform,opacity}
+
+/* lớp 3: cành mai phía trước, trôi nhanh hơn, hơi nhoè */
+.mai{position:absolute;z-index:5;pointer-events:none;will-change:transform}
+.mai-trai{left:-40px;bottom:-30px;width:min(46vw,520px);filter:blur(1.2px)}
+.mai-phai{right:-50px;top:-20px;width:min(34vw,380px);filter:blur(.6px)}
+.hat{position:absolute;inset:0;z-index:4;pointer-events:none}
+.hat i{position:absolute;width:5px;height:5px;border-radius:50%;background:#F7D88E;opacity:.0;
+  box-shadow:0 0 8px 2px rgba(247,216,142,.35);animation:bay 9s linear infinite}
+@keyframes bay{0%{transform:translateY(20px);opacity:0}15%{opacity:.8}100%{transform:translateY(-60vh);opacity:0}}
+
+/* chữ thứ hai khi ảnh đã lên */
+.ket{position:absolute;left:0;right:0;bottom:calc(env(safe-area-inset-bottom) + 6vh);z-index:6;text-align:center;padding:0 20px;
+  opacity:0;transform:translateY(16px);will-change:transform,opacity;color:var(--kem)}
+.ket p{margin:0 auto 18px;max-width:38ch;font-size:clamp(15px,1.3vw,18px);text-wrap:balance}
+.nut{display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 30px;border-radius:999px;
+  background:var(--vang);color:var(--do-dam);font:600 17px/1 "Be Vietnam Pro",sans-serif;text-decoration:none;white-space:nowrap;
+  box-shadow:0 10px 24px -8px rgba(20,0,2,.6),inset 0 1px 0 rgba(255,255,255,.5);transition:transform .14s var(--ease),background .16s var(--ease)}
+.nut:active{transform:scale(.97)}
+@media (hover:hover) and (pointer:fine){.nut:hover{background:#F2D395}}
+.nut-dau{margin-top:26px}
+.nut-mo{background:transparent;color:var(--vang);box-shadow:inset 0 0 0 1.5px rgba(233,194,122,.7)}
+
+/* ============ PHẦN DƯỚI ============ */
+.vi-sao{padding:clamp(72px,10vw,140px) 20px clamp(56px,8vw,110px);max-width:1080px;margin:0 auto;
+  display:grid;grid-template-columns:1fr 1.25fr;gap:clamp(32px,6vw,90px);align-items:start}
+.vi-sao h2{font:700 clamp(32px,4vw,54px)/1.06 Lora,Georgia,serif;letter-spacing:-.01em;margin:0;color:var(--do);text-wrap:balance}
+.vi-sao .dan{margin:18px 0 0;color:var(--muc-2);max-width:36ch}
+.ly-do{margin:0;padding:0;list-style:none}
+.ly-do li{padding:22px 0;border-top:1px solid #E3D2B0}
+.ly-do li:last-child{border-bottom:1px solid #E3D2B0}
+.ly-do h3{margin:0 0 6px;font:700 21px/1.3 Lora,Georgia,serif;color:var(--muc)}
+.ly-do p{margin:0;color:var(--muc-2);max-width:52ch}
+.chot{background:var(--do-dam);color:var(--kem);text-align:center;padding:clamp(64px,9vw,120px) 20px calc(clamp(64px,9vw,120px) + env(safe-area-inset-bottom))}
+.chot h2{font:700 clamp(30px,4.2vw,56px)/1.08 Lora,Georgia,serif;margin:0 auto 14px;color:var(--vang);max-width:18ch;text-wrap:balance}
+.chot p{margin:0 auto 30px;color:#F0DDBE;max-width:42ch}
+.chot .nhom{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.ghi-thu{font-size:13px;color:#C9A98A;margin-top:28px}
+
+/* ============ ĐIỆN THOẠI: bố cục riêng ============ */
+@media (max-width:760px){
+  .bia{height:210vh}
+  .chu{padding-top:calc(env(safe-area-inset-top) + 7vh)}
+  .chu h1{font-size:clamp(42px,13vw,64px)}
+  .chu .phu{font-size:15px;max-width:28ch}
+  .nut-dau{margin-top:20px}
+  .san-khau{top:71%}
+  .hop{--W:250px;--D:176px;--H:92px;--L:30px}
+  .bang-doc{transform:scaleX(.65)}
+  .n-tren .bang-ngang{transform:scaleY(.65)}
+  .no{width:96px;height:62px}
+  .the-anh{--Wa:226px}
+  .bong{width:380px;top:calc(71% + 74px)}
+  .mai-trai{width:62vw;left:-60px;bottom:-40px}
+  .mai-phai{width:46vw;right:-60px;top:-30px}
+  .dau{display:none}
+  .vi-sao{grid-template-columns:1fr}
+}
+@media (max-height:640px) and (max-width:760px){.chu h1{font-size:40px}.san-khau{top:73%}}
+
+/* giảm chuyển động: hiện sẵn cảnh hộp đã mở, không cuộn dài */
+@media (prefers-reduced-motion:reduce){
+  .bia{height:100vh;height:100svh}
+  .hat{display:none}
+}
+</style>
+</head>
+<body>
+
+<header class="bia" id="bia" aria-label="Giới thiệu Quà Tết Tâm An">
+  <div class="bia-khung">
+    <div class="lop-nen" id="lNen"></div>
+    <div class="anh-sang" id="lSang"></div>
+    <div class="bong" id="lBong"></div>
+
+    <div class="chu" id="lChu">
+      <p class="nam">Tết Đinh Mùi 2027</p>
+      <h1>Quà Tết Tâm An</h1>
+      <p class="phu">Set quà Tết giá sỉ cho cửa hàng và đại lý. Giá rõ ràng, bán lẻ vẫn có lời.</p>
+      <a class="nut nut-dau" href="./#danh-muc">Xem mẫu</a>
+    </div>
+
+    <div class="san-khau" aria-hidden="true">
+      <div class="hop" id="hop">
+        <div class="mat l-day long"><div class="toa"></div></div>
+        <div class="mat l-sau long"></div>
+        <div class="mat l-trai long"></div>
+        <div class="mat l-phai long"></div>
+        <div class="the-anh" id="theAnh"><div class="khung"><img src="img/bia-mq1.jpg" alt="" width="900" height="975" decoding="async" fetchpriority="high"></div></div>
+        <div class="mat m-day"></div>
+        <div class="mat m-sau"></div>
+        <div class="mat m-trai"><div class="bang-doc"></div></div>
+        <div class="mat m-phai"><div class="bang-doc"></div></div>
+        <div class="mat m-truoc"><div class="vien"></div><div class="bang-doc"></div><span class="dau">Tâm An</span></div>
+        <div class="nap" id="nap">
+          <div class="mat n-sau"></div>
+          <div class="mat n-trai"></div>
+          <div class="mat n-phai"></div>
+          <div class="mat n-truoc"><div class="bang-doc"></div></div>
+          <div class="mat n-tren"><div class="bang-doc"></div><div class="bang-ngang"></div>
+            <svg class="no" viewBox="0 0 150 96"><defs><linearGradient id="vg" x1="0" x2="1"><stop offset="0" stop-color="#A9772A"/><stop offset=".5" stop-color="#F6DB9C"/><stop offset="1" stop-color="#B98A3A"/></linearGradient></defs>
+              <path d="M75 48C52 18 14 8 8 30s30 34 67 18z" fill="url(#vg)" stroke="#8A5E1E" stroke-width="1.5"/>
+              <path d="M75 48C98 18 136 8 142 30s-30 34-67 18z" fill="url(#vg)" stroke="#8A5E1E" stroke-width="1.5"/>
+              <path d="M70 52l-22 40 14-4 8 8 6-40zM80 52l22 40-14-4-8 8-6-40z" fill="url(#vg)" stroke="#8A5E1E" stroke-width="1.2"/>
+              <ellipse cx="75" cy="49" rx="11" ry="10" fill="#E9C27A" stroke="#8A5E1E" stroke-width="1.5"/></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hat" id="lHat"></div>
+
+    <svg class="mai mai-trai" id="maiTrai" viewBox="0 0 520 420" aria-hidden="true"><g id="canh1"></g></svg>
+    <svg class="mai mai-phai" id="maiPhai" viewBox="0 0 380 300" aria-hidden="true"><g id="canh2"></g></svg>
+
+    <div class="ket" id="lKet">
+      <p>Mỗi set đã xếp sẵn rượu, trà, bánh, kẹo trong hộp quà sang trọng. Chọn mẫu, để lại số điện thoại là xong.</p>
+      <a class="nut" href="./#danh-muc">Xem mẫu</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="vi-sao">
+    <div>
+      <h2>Khách sỉ chọn Tâm An vì ba điều</h2>
+      <p class="dan">Mình làm việc trực tiếp với kho đóng quà, nên báo giá nhanh và đổi mẫu linh hoạt.</p>
+    </div>
+    <ul class="ly-do">
+      <li><h3>Giá sỉ rõ ràng</h3><p>Mỗi mẫu ghi sẵn giá sỉ cho một set, kèm giá bán lẻ gợi ý để anh chị tính lời trước khi nhập.</p></li>
+      <li><h3>Bán lẻ vẫn có lời</h3><p>Giá gợi ý luôn chừa phần lời cho cửa hàng, không phải tự dò giá thị trường.</p></li>
+      <li><h3>Đổi món theo ý</h3><p>Muốn đổi chai rượu, gói kẹo cho hợp túi tiền khách của mình, Tâm An báo phương án và giá ngay.</p></li>
+    </ul>
+  </section>
+  <section class="chot">
+    <h2>Chọn set quà Tết cho cửa hàng của anh chị</h2>
+    <p>Xem toàn bộ mẫu, cho vào giỏ, để lại số điện thoại. Tâm An gọi lại xác nhận còn hàng và giá.</p>
+    <div class="nhom"><a class="nut" href="./#danh-muc">Xem mẫu</a></div>
+    <p class="ghi-thu">Bản thử màn đầu. Danh mục bên dưới đang dùng trang hiện tại.</p>
+  </section>
+</main>
+
+<script>
+(function(){
+  /* vẽ cành mai bằng mã: cành nâu + hoa 5 cánh vàng */
+  function hoa(x,y,r,xoay){
+    let s='<g transform="translate('+x+' '+y+') rotate('+xoay+')">';
+    for(let i=0;i<5;i++)s+='<ellipse cx="0" cy="'+(-r*.62)+'" rx="'+(r*.42)+'" ry="'+(r*.62)+'" fill="#F7C531" stroke="#D99A12" stroke-width=".8" transform="rotate('+(i*72)+')"/>';
+    return s+'<circle r="'+(r*.26)+'" fill="#E2701A"/><circle r="'+(r*.1)+'" fill="#7A3A08"/></g>';
+  }
+  function canh(g,duong,dsHoa,day){
+    let s='';
+    duong.forEach((d,i)=>s+='<path d="'+d+'" fill="none" stroke="#4A2614" stroke-width="'+(day[i]||4)+'" stroke-linecap="round"/>');
+    dsHoa.forEach(h=>s+=hoa(h[0],h[1],h[2],h[3]||0));
+    document.getElementById(g).innerHTML=s;
+  }
+  canh('canh1',
+    ['M-10 430C80 360 160 300 260 250S420 170 520 120','M200 280C220 230 260 200 300 190','M330 205C360 170 380 140 420 128','M120 345C110 300 130 260 170 240'],
+    [[262,248,22,10],[300,188,18,30],[420,126,20,5],[468,150,15,40],[170,238,19,20],[360,180,14,60],[215,270,13,15],[505,118,13,0],[130,300,12,45]],
+    [9,5,4,4]);
+  canh('canh2',
+    ['M390 10C300 40 230 90 150 160S40 260 0 300','M250 80C240 120 210 140 190 150','M120 190C110 220 80 240 60 245'],
+    [[150,160,18,12],[190,150,16,40],[60,245,15,10],[230,96,14,70],[300,52,15,20],[95,214,12,0],[350,30,12,30]],
+    [7,4,3]);
+  /* hạt vàng bay */
+  const hat=document.getElementById('lHat');
+  for(let i=0;i<16;i++){const e=document.createElement('i');e.style.left=(8+Math.random()*84)+'%';e.style.top=(55+Math.random()*40)+'%';
+    e.style.animationDelay=(-Math.random()*9)+'s';e.style.animationDuration=(7+Math.random()*6)+'s';hat.appendChild(e);}
+
+  const giam=matchMedia('(prefers-reduced-motion: reduce)');
+  const $=id=>document.getElementById(id);
+  const bia=$('bia'),hop=$('hop'),nap=$('nap'),the=$('theAnh'),nen=$('lNen'),sang=$('lSang'),chu=$('lChu'),ket=$('lKet'),
+        bong=$('lBong'),m1=$('maiTrai'),m2=$('maiPhai'),toa=hop.querySelector('.toa');
+  const kep=(v,a,b)=>Math.min(b,Math.max(a,v)),
+        doan=(p,a,b)=>kep((p-a)/(b-a),0,1),
+        em=t=>1-Math.pow(1-t,3),
+        emio=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
+  let pHien=0,pDich=0,chay=false;
+
+  function ve(p){
+    const dt=innerWidth<=760, H=parseFloat(getComputedStyle(hop).getPropertyValue('--H'))||150,
+          D=parseFloat(getComputedStyle(hop).getPropertyValue('--D'))||300;
+    const tNap=emio(doan(p,.08,.5)), tAnh=em(doan(p,.3,.82)), tKet=em(doan(p,.72,.95)), tLui=em(doan(p,.5,1));
+    // hộp: góc nhìn 3/4 từ trên, xoay nhẹ khi mở, lùi xuống khi ảnh lên
+    const rx=-22+6*tNap, ry=-26+14*tNap, chim=(dt?200:300)*tLui;
+    hop.style.transform='translateY('+chim+'px) rotateX('+rx+'deg) rotateY('+ry+'deg) scale('+(1-.12*tLui)+')';
+    // nắp: lật quanh mép sau, nhấc lên và lùi ra sau
+    nap.style.transform='translateY('+(-H/2)+'px) translateZ('+(-D/2)+'px) translateY('+(-28*tNap)+'px) rotateX('+(118*tNap)+'deg) translateZ('+(D/2)+'px)';
+    // ảnh set quà: nằm trong lòng hộp, dựng dậy và bay lên đối diện người xem
+    const tLen=em(doan(p,.28,.66)), tDung=emio(doan(p,.34,.8)), nghieng=1-tDung;
+    the.style.visibility=p>.27?'visible':'hidden';
+    the.style.transform='translate3d(0,'+((H/2-12)*(1-tLen) - (dt?150:230)*tLen - chim)+'px,'+(-6*(1-tLen)+(dt?40:60)*tDung)+'px) '
+      +'rotateY('+(-ry*tDung)+'deg) rotateX('+(90*nghieng - rx*tDung)+'deg) scale('+(.78+.42*tAnh)+')';
+    toa.style.setProperty('--toa',(tNap*(1-.4*tAnh)).toFixed(3));
+    sang.style.opacity=(tNap*.95).toFixed(3);
+    sang.style.transform='translate(-50%,-50%) scale('+(.6+.5*tNap)+')';
+    bong.style.transform='translate(-50%,-50%) translateY('+chim+'px) scale('+(1-.15*tLui)+')';
+    // các lớp trôi với tốc độ khác nhau
+    nen.style.transform='translateY('+(-3*p)+'%) scale('+(1+.05*p)+')';
+    chu.style.transform=giam.matches?'none':'translateY('+(-(dt?70:110)*em(doan(p,.25,.9)))+'px)';
+    chu.style.opacity=giam.matches?'1':(1-em(doan(p,.5,.8))).toFixed(3);chu.style.visibility=p>.79?'hidden':'visible';
+    m1.style.transform='translate('+(-60*p)+'px,'+(140*p)+'px) rotate('+(-4*p)+'deg)';
+    m2.style.transform='translate('+(50*p)+'px,'+(-90*p)+'px)';
+    ket.style.opacity=tKet.toFixed(3);
+    ket.style.transform='translateY('+(16*(1-tKet))+'px)';
+  }
+  function tienDo(){
+    if(giam.matches)return .6;
+    const r=bia.getBoundingClientRect(),dai=bia.offsetHeight-innerHeight;
+    return dai>0?kep(-r.top/dai,0,1):0;
+  }
+  function vong(){
+    pHien+= (pDich-pHien)*(matchMedia('(pointer:coarse)').matches?.35:.18);
+    if(Math.abs(pDich-pHien)<.0005)pHien=pDich;
+    ve(pHien);
+    if(pHien!==pDich)requestAnimationFrame(vong);else chay=false;
+  }
+  function cuon(){pDich=tienDo();if(giam.matches){pHien=pDich;ve(pHien);return}if(!chay){chay=true;requestAnimationFrame(vong)}}
+  addEventListener('scroll',cuon,{passive:true});
+  addEventListener('resize',cuon);
+  giam.addEventListener&&giam.addEventListener('change',cuon);
+  pHien=pDich=tienDo();ve(pHien);
+  window.__ve=ve;
+})();
+</script>
+</body>
+</html>
