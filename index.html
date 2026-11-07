@@ -121,7 +121,7 @@ padding:16px 16px calc(16px + env(safe-area-inset-bottom))}
     </div>
   </div>
   <main class="qt-ds" id="ds"></main>
-  <footer class="qt-cuoi phu mo">Giá sỉ tính cho 1 set. Giá bán lẻ là giá gợi ý. Phiên bản 1.1, cập nhật ngày 07/11/2026.</footer>
+  <footer class="qt-cuoi phu mo">Giá sỉ tính cho 1 set. Giá bán lẻ là giá gợi ý. Phiên bản 1.3, cập nhật ngày 07/11/2026.</footer>
 </div>
 
 <div class="hop" id="hopAnh" hidden role="dialog" aria-modal="true" aria-labelledby="hopTen">
@@ -212,7 +212,7 @@ document.addEventListener('click',async e=>{
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#hopAnh').hidden)dongAnh()});
 $('#tim').addEventListener('input',veDs);
 $('#xep').addEventListener('change',veDs);
-fetch('data.json?v=1.2').then(r=>r.json()).then(d=>{DS=d;veTab();veDs()})
+fetch('data.json?v=1.3').then(r=>r.json()).then(d=>{DS=d;veTab();veDs()})
   .catch(()=>{$('#ds').innerHTML='<p class="qt-trong phu cau">Chưa tải được danh sách mẫu. Hãy kiểm tra mạng rồi tải lại trang.</p>'});
 </script>
 </body>
