@@ -222,7 +222,7 @@ const ICON={
  tim:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>'
 };
 const TAB=[['don','Đơn hàng'],['khach','Khách sỉ'],['tien','Thu chi'],['tk','Tài khoản']];
-const S={tk:ls.get('qtq_tk'),toi:ls.get('qtq_toi'),dl:null,tab:'don',moDon:null,moKhach:null,locDon:'dang',timDon:'',timKhach:'',locTien:'tat',luu:{},hang:Promise.resolve(),anhTam:{},banMoi:''};
+const S={theHe:{},doiPhien:{},cho:{},tk:ls.get('qtq_tk'),toi:ls.get('qtq_toi'),dl:null,tab:'don',moDon:null,moKhach:null,locDon:'dang',timDon:'',timKhach:'',locTien:'tat',luu:{},hang:Promise.resolve(),anhTam:{},banMoi:''};
 const rong=()=>matchMedia('(min-width:1100px)').matches;
 
 /* ================= Máy chủ ================= */
@@ -237,6 +237,7 @@ async function goi(hd,du,{doc}={}){
     if(o.canDangNhap){dangXuat('Phiên đăng nhập đã hết. Vui lòng đăng nhập lại.');throw new Error(o.loi||'Vui lòng đăng nhập.')}
     if(o.canDoiPin){S.toi=Object.assign({},S.toi,{canDoiPin:true});ls.set('qtq_toi',S.toi);veDoiPin();throw new Error(o.loi)}
     if(o.dl)nhan(o.dl);
+    if(o.taiLai&&hd!=='suaDon')setTimeout(()=>taiLai(true),0);
     return o;
   }catch(e){if(e instanceof TypeError)throw new Error('Không kết nối được máy chủ. Kiểm tra mạng rồi thử lại.');throw e}
   finally{dangGoi--;if(!dangGoi&&$('#q-lam'))$('#q-lam').classList.remove('quay')}
@@ -247,10 +248,8 @@ function nhan(dl){
   S.chuan={};(dl.don||[]).forEach(d=>{S.chuan[d.ma]=JSON.stringify(d)});
   if(dl.toi){S.toi=Object.assign({},S.toi,dl.toi);ls.set('qtq_toi',S.toi)}
 }
-async function taiLai(im){
-  try{const o=await goi('tai');if(o.ok){nhan(o);ve()}else if(!im)bao(o.loi||'Chưa tải được số mới.')}
-  catch(e){if(!im)bao(e.message)}
-}
+async function goiTai(im){try{const o=await goi('tai');if(o.ok){nhan(o);ve()}else if(!im)bao(o.loi||'Chưa tải được số mới.')}catch(e){if(!im)bao(e.message)}}
+function taiLai(im){const p=S.hang.then(()=>goiTai(im));S.hang=p.catch(()=>{});return p}
 
 /* ================= Tính tiền (cùng công thức máy chủ, chỉ để xem trước) ================= */
 function tinhDon(d,ch){
@@ -457,25 +456,33 @@ function veDongMau(d,l,i,chu){
 function donDang(){return S.dl&&(S.dl.don||[]).find(x=>x.ma===S.moDon)}
 function luuDon(ma,thay,cauOk){
   const d=(S.dl.don||[]).find(x=>x.ma===ma);if(!d)return;
-  const cu=JSON.parse(JSON.stringify(d));
+  const goc=S.chuan&&S.chuan[ma]?JSON.parse(S.chuan[ma]):JSON.parse(JSON.stringify(d));
+  const phienBam=goc.capNhat,theHe=(S.theHe[ma]||0),khoa=maMoi();
   // hiện ngay
   if(thay.dong)d.ct=thay.dong;
   ['trangThai','nguoiXuLy','ck','layHD','phiVC','hoTro','cocTay','ngt','ngayGiao','ghiChu'].forEach(k=>{if(thay[k]!==undefined)d[k]=thay[k]});
   if(thay.nhan)d.nhan=thay.nhan;
   Object.assign(d,tinhLaiTam(d));
-  S.luu[ma]='dang';ve();
+  S.luu[ma]='dang';S.cho[ma]=(S.cho[ma]||0)+1;ve();
   S.hang=S.hang.then(async()=>{
-    // phiên lấy từ bản máy chủ xác nhận gần nhất (lượt lưu trước có thể vừa xong)
-    const goc=S.chuan&&S.chuan[ma]?JSON.parse(S.chuan[ma]):cu;
-    try{const o=await goi('suaDon',{ma,thay,phien:goc.capNhat,khoa:maMoi()});
-      if(!o.ok){if(o.xungDot){S.luu[ma]='';bao(o.loi)}else{khoiPhuc(ma,goc);S.luu[ma]='loi';bao('Chưa lưu được: '+(o.loi||'lỗi không rõ')+' Đã trả lại số cũ.')}ve();return}
+    try{
+      if((S.theHe[ma]||0)!==theHe)return;                 // lượt trước của đơn này đã lỗi: bỏ lượt dựng trên số cũ
+      const ds=S.doiPhien[ma]||(S.doiPhien[ma]={});let phien=phienBam;while(ds[phien])phien=ds[phien];
+      const o=await goi('suaDon',{ma,thay,phien,khoa});
+      if(o.taiLai)await goiTai();
+      if(!o.ok){S.theHe[ma]=theHe+1;
+        if(o.xungDot){S.luu[ma]='';bao(o.loi)}
+        else{khoiPhuc(ma);S.luu[ma]='loi';bao('Chưa lưu được: '+(o.loi||'lỗi không rõ')+' Đã trả lại số cũ.')}
+        ve();return}
+      const moi=S.chuan&&S.chuan[ma]?JSON.parse(S.chuan[ma]).capNhat:0;if(moi&&moi!==phien)ds[phien]=moi;
       S.luu[ma]='ok';ve();if(cauOk)bao(cauOk);
       setTimeout(()=>{if(S.luu[ma]==='ok'){S.luu[ma]='';if(S.moDon===ma)ve()}},2500);
-    }catch(e){khoiPhuc(ma,S.chuan&&S.chuan[ma]?JSON.parse(S.chuan[ma]):cu);S.luu[ma]='loi';ve();bao('Chưa lưu được: '+e.message+' Đã trả lại số cũ.')}
+    }catch(e){S.theHe[ma]=theHe+1;khoiPhuc(ma);S.luu[ma]='loi';ve();bao('Chưa lưu được: '+e.message+' Đã trả lại số cũ.')}
+    finally{S.cho[ma]--}
   });
 }
 function tinhLaiTam(d){const t=tinhDon(d,S.dl.cauHinh);return {tienHang:t.tienHang,tienCk:t.tienCk,tienVat:t.tienVat,tong:t.tong,lai:t.lai,hoaHong:t.hoaHong,soSet:t.soSet,conLai:t.tong-(d.daThu||0)}}
-function khoiPhuc(ma,cu){const ds=S.dl.don||[],i=ds.findIndex(x=>x.ma===ma);if(i>=0)ds[i]=cu}
+function khoiPhuc(ma){const cu=S.chuan&&S.chuan[ma]?JSON.parse(S.chuan[ma]):null;if(!cu)return;const ds=S.dl.don||[],i=ds.findIndex(x=>x.ma===ma);if(i>=0)ds[i]=cu}
 function dongMoi(d){return JSON.parse(JSON.stringify(d.ct||[]))}
 
 /* ---------- Hộp nổi ---------- */
@@ -898,7 +905,7 @@ document.addEventListener('click',e=>{
   if(t=g('[data-suapa]')){const [i,j]=t.dataset.suapa.split(':').map(Number);formSetRieng(d,i,j);return}
   if(t=g('[data-chonpa]')){const [i,j]=t.dataset.chonpa.split(':').map(Number);const ct=dongMoi(d),l=ct[i],p=l.pa[j];
     if(!l.goc)l.goc={ma:l.ma,ten:l.ten,tp:l.tp,gia:l.gia,von:l.von||0};
-    Object.assign(l,{ten:p.ten||l.ten,tp:p.tp,gia:p.gia,von:p.von,tt:'con',hoi:Date.now(),anh:(p.anh||[])[0]?'https://lh3.googleusercontent.com/d/'+p.anh[0]+'=w800':l.anh});
+    Object.assign(l,{ten:p.ten||l.ten,tp:p.tp,gia:p.gia,von:p.von,tt:'con',hoi:Date.now(),paChon:p.id,anh:(p.anh||[])[0]?'https://lh3.googleusercontent.com/d/'+p.anh[0]+'=w800':l.anh});
     luuDon(d.ma,{dong:ct},'Đã đổi sang phương án '+String.fromCharCode(65+j)+'.');return}
   if(t=g('[data-baogia]')){const [i,j]=t.dataset.baogia.split(':').map(Number);phieuBaoGia(d,i,j);return}
   if(g('[data-themmau]')){themMau(d);return}
