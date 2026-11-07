@@ -120,6 +120,13 @@ img{max-width:100%;display:block}
 .chot h2{font:700 clamp(32px,4.4vw,60px)/1.06 Lora,Georgia,serif;margin:0 auto 14px;color:var(--vang);max-width:16ch;text-wrap:balance}
 .chot p{margin:0 auto 30px;color:#F0DDBE;max-width:44ch}
 .ghi-thu{font-size:13px;color:#C9A98A;margin-top:28px !important}
+.nhom-nut{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.nut-vien{background:transparent;color:var(--vang);box-shadow:inset 0 0 0 1.5px rgba(233,194,122,.75)}
+@media (hover:hover) and (pointer:fine){.nut-vien:hover{background:rgba(233,194,122,.12)}}
+.lien-he{font-style:normal;margin:44px auto 0;padding-top:28px;border-top:1px solid rgba(233,194,122,.25);max-width:520px;color:#F0DDBE;font-size:15px;line-height:1.7}
+.lien-he p{margin:0}
+.lien-he .nhan{color:var(--vang);font-weight:600}
+.lien-he a{color:#FFE3A8;text-decoration:underline;text-underline-offset:3px}
 
 /* ============ ĐIỆN THOẠI ============ */
 @media (max-width:760px){
@@ -227,7 +234,12 @@ img{max-width:100%;display:block}
   <section class="chot">
     <h2>Món quà Tết làm nên thể diện doanh nghiệp</h2>
     <p>Chọn mẫu ưng ý và để lại số điện thoại. Cần in logo doanh nghiệp lên hộp quà, xưởng Tâm An tư vấn và báo giá ngay trong ngày.</p>
-    <a class="nut" href="./">Xem mẫu</a>
+    <div class="nhom-nut"><a class="nut" href="./">Xem mẫu</a><a class="nut nut-vien" href="tel:0986293719">Gọi 0986 293 719</a></div>
+    <address class="lien-he">
+      <p><span class="nhan">Xưởng quà Tết Tâm An</span></p>
+      <p><span class="nhan">Địa chỉ:</span> Vinhomes Smart City, Tây Mỗ, Nam Từ Liêm, Hà Nội</p>
+      <p><span class="nhan">Hotline:</span> <a href="tel:0986293719">0986 293 719</a></p>
+    </address>
     <p class="ghi-thu">Bản thử trang giới thiệu. Nút Xem mẫu đang dẫn tới danh mục hiện tại.</p>
   </section>
 </main>
